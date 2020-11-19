@@ -1,18 +1,18 @@
-package com.nlscan.uhf.settings;
+package com.nlscan.uhf.bu;
 
-import com.nlscan.android.uhf.UHFManager;
-
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
-public class BaseActivity extends Activity {
+import com.nlscan.android.uhf.UHFManager;
 
-	private boolean mPaused = false;
+public class BasePrefenceActivity extends PreferenceActivity {
+
+	protected boolean mPaused = false;
 	
 	protected ProgressDialog mDialog = null;
 	
@@ -38,7 +38,7 @@ public class BaseActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mPaused = true;
+//		mPaused = true;
 	}
 	
 	protected void registerUHFStateReceiver()
@@ -62,8 +62,7 @@ public class BaseActivity extends Activity {
 		
 		if(mDialog != null && mDialog.isShowing())
 			return ;
-		
-		mDialog = new ProgressDialog(BaseActivity.this);
+		mDialog = new ProgressDialog(BasePrefenceActivity.this);
 		mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);// 设置进度条的形式为圆形转动的进度条
 		mDialog.setCancelable(true);// 设置是否可以通过点击Back键取消
 		mDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条

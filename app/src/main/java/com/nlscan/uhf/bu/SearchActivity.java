@@ -1,4 +1,4 @@
-package com.nlscan.uhf.settings;
+package com.nlscan.uhf.bu;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -31,8 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFReader;
@@ -40,7 +38,6 @@ import com.nlscan.android.uhf.UHFReader;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;

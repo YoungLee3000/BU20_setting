@@ -13,14 +13,14 @@
         android:id="@+id/trigger_mode"
         android:icon="@drawable/ic_launcher"
         android:title="@string/trigger_mode" 
-        android:fragment="com.nlscan.uhf.settings.TriggerModeSettingFragment"/>
+        android:fragment="com.nlscan.uhf.bu.TriggerModeSettingFragment"/>
         
     <!-- 盘点提示 -->
      <header
         android:id="@+id/inventory_prompt"
         android:icon="@drawable/ic_launcher"
         android:title="@string/scan_prompt" 
-        android:fragment="com.nlscan.uhf.settings.PromptSettingFragment"/>
+        android:fragment="com.nlscan.uhf.bu.PromptSettingFragment"/>
      
     <!-- 盘点测试 -->
     <header

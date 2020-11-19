@@ -1,10 +1,8 @@
-package com.nlscan.uhf.settings;
+package com.nlscan.uhf.bu;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ScrollView;
 
 public abstract class AbsDialogFragment extends DialogFragment

@@ -1,4 +1,4 @@
-package com.nlscan.uhf.settings;
+package com.nlscan.uhf.bu;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
