@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UHF Manager</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Common -->
+    <string name="common_setting">Programming...</string>
+    <string name="common_confirm">OK</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_onning">Processing...</string>
+    <string name="success">succeeded</string>
+    <string name="failed">failed</string>
+    <string name="common_tip">Tip</string>
+    <string name="common_no">No</string>
+
+    <!-- 设置主界面 -->
+    <string name="power_on">UHF Module On</string>
+    <string name="power_oning">Powering on the module...</string>
+    <string name="power_on_summary">Turn on &#038; initialize UHF module</string>
+    <string name="inventory_demo">Inventory Demo</string>
+    <string name="read_write_lock">Access Control</string>
+    <string name="read_write_lock_summary">Control Read/Write, Lock and Kill operations</string>
+    <string name="firmware_upgrade">Firmware Upgrade</string>
+    <string name="uhf_settings">UHF Settings</string>
+    <string name="trigger_mode">Inventory Trigger</string>
+    <string name="trigger_mode_main">SCAN key</string>
+    <string name="trigger_mode_side">Left/Right SCAN key</string>
+    <string name="trigger_mode_back">Trigger on pistol grip</string>
+    <string name="scan_prompt">Inventory Notification</string>
+    <string name="scan_prompt_sound">Sound</string>
+    <string name="scan_prompt_vibrator">Vibration</string>
+    <string name="scan_prompt_led">LED</string>
+
+
+    <!-- 盘点测试 -->
+    <string name="tab2_layout_textView1">Tag Count in Current Round:</string>
+    <string name="tab2_layout_textView2">   Tag Count in All Rounds:</string>
+    <string name="tab2_layout_textView3">   All times of tags:</string>
+    <string name="press_again_to_exit"> Press it again to exit</string>
+    <string name="inventory_count">Inventory Count</string>
+    <string name="inventory_period">Time of inventory : </string>
+    <string name="reload_module">Reload New Module</string>
+
+    <string name="reload_module_summary">Click here when current module is changed</string>
+    <string name="reload_module_promt">Confirm to reload new module?</string>
+    <string name="restore_default">Restore to default</string>
+
+    <string name="restore_default_promt">Comfirm to restore :\n<ul><li>"\tCommon settings"</li>\n<li>"\tUHF settings"</li></ul>\n\nto default?</string>
+    <string name="power_off_prompt">Do power off ?</string>
+
+    <string name="do_power_down">Power off</string>
+    <string name="loading_uhf_module">Loading module...</string>
+
+    <string name="uhf_module_unavailable">UHF device not detected, verify that UHF module exists and install correctly.</string>
+    <string name="common_exit">Exit</string>
+    <string name="search_again">Reload</string>
+    <string name="power_on_failed_prompt">Power failure, please unplug the UHF module again.</string>
+
+    <string name="power_on_success">Power success.</string>
+
+
+    <string name="scan_connect">Scan and Connect</string>
+    <string name="scan_connect_summary">Scan the barcode to connect a BLE device</string>
+    <string name="scan_connect_go">Enter Scan Interface</string>
+    <string name="scan_connect_dialog">the device is connecting...</string>
+    <string name="scan_connect_tips">
+        1.Open the Bluetooth-UHF device,scan the its barcode by PDA, if connect successfully, it will jump to a new interface.\n
+        2.If failed, try these operations:\n
+        \t\tA.If only the bluetooth LED is on, press the P button once, and the bluetooth LED will be flashing, then the device can be connected.\n
+        \t\tB.If both the buletooth LED and battery LED are on, give a long press to the P button until the Bluetooth begin flash, then the device can be connected. </string>
+
+    <string-array name="inventory_table_header">
+        <item>No.</item>
+        <item>EPC ID</item>
+        <item>Read Count</item>
+        <item>Antenna</item>
+        <item>Protocol</item>
+        <item>RSSI</item>
+        <item>Frequency</item>
+        <item>Custom Data</item>
+    </string-array>
+
+</resources>

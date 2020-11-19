@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- 上电 -->
+    <header
+        android:id="@+id/power_enable"
+        android:icon="@drawable/ic_launcher"
+        android:summary="@string/power_on_summary"
+        android:title="@string/power_on" />
+
+    <!-- 触发按键 -->
+    <header
+        android:id="@+id/trigger_mode"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/trigger_mode" 
+        android:fragment="com.nlscan.uhf.settings.TriggerModeSettingFragment"/>
+        
+    <!-- 盘点提示 -->
+     <header
+        android:id="@+id/inventory_prompt"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/scan_prompt" 
+        android:fragment="com.nlscan.uhf.settings.PromptSettingFragment"/>
+     
+    <!-- 盘点测试 -->
+    <header
+        android:id="@+id/inventory_demo"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/inventory_demo" >
+        <intent
+            android:targetClass="com.nlscan.uhf.settings.InventoryActivity"
+            android:targetPackage="com.nlscan.uhf.settings" />
+    </header>
+
+    <!-- 读写锁 -->
+    <header
+        android:id="@+id/read_write_lock"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/read_write_lock" >
+        <intent android:action="com.nlscan.intent.action.UHF_READ_WRITE_LOCK" />
+        <!--
+             <intent
+            android:targetClass="com.nlscan.android.scansettings.ReplaceResultSettingActivity"
+            android:targetPackage="com.nlscan.android.scansettings" />
+        -->
+    </header>
+
+    <!-- 参数设置 -->
+    <header
+        android:id="@+id/uhf_func_settings"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/uhf_settings" >
+        <intent android:action="com.nlscan.intent.action.UHF_PARAM_SETTING" />
+        <!--
+             <intent
+            android:targetClass="com.nlscan.android.scansettings.ReplaceResultSettingActivity"
+            android:targetPackage="com.nlscan.android.scansettings" />
+        -->
+    </header>
+
+    <!-- 重新加载模块 -->
+    <header
+        android:id="@+id/reload_module"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/reload_module"
+        android:summary="@string/reload_module_summary"/>
+
+
+
+    <!-- 固件升级 -->
+    <header
+        android:id="@+id/uhf_func_upgrade"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/firmware_upgrade" >
+        <intent android:action="android.intent.action.nlscan.upgradeBadge" />
+
+    </header>
+
+
+     <!-- 恢复默认配置 -->
+    <header
+        android:id="@+id/restore_default"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/restore_default"/>
+
+
+    <!-- 参数设置 -->
+    <header
+        android:id="@+id/scan_connect"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/scan_connect"
+        android:summary="@string/scan_connect_summary">
+        <intent
+            android:targetClass="com.nlscan.uhf.settings.SearchActivity"
+            android:targetPackage="com.nlscan.uhf.settings" />
+
+    </header>
+        
+</preference-headers>

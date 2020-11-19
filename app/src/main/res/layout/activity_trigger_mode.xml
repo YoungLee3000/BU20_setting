@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10.0dip" >
+
+    <LinearLayout
+        android:id="@+id/ll_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical" >
+
+        <CheckBox
+            android:id="@+id/cb_scan_main"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:button="@drawable/checkbox_selector"
+            android:background="@drawable/checkbox_bg_selector"
+            android:paddingLeft="10.0dip"
+            android:text="@string/trigger_mode_main"
+            android:textColor="@android:color/black" />
+
+        <CheckBox
+            android:id="@+id/cb_scan_side"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.0dip"
+            android:button="@drawable/checkbox_selector"
+            android:background="@drawable/checkbox_bg_selector"
+            android:paddingLeft="10.0dip"
+            android:text="@string/trigger_mode_side"
+            android:textColor="@android:color/black" />
+        
+         <CheckBox
+            android:id="@+id/cb_scan_back"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.0dip"
+            android:button="@drawable/checkbox_selector"
+            android:background="@drawable/checkbox_bg_selector"
+            android:paddingLeft="10.0dip"
+            android:text="@string/trigger_mode_back"
+            android:textColor="@android:color/black" />
+         
+    </LinearLayout>
+
+</RelativeLayout>

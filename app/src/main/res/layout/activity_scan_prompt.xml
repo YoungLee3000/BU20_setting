@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10.0dip" >
+
+    <LinearLayout
+        android:id="@+id/ll_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical" >
+
+        <CheckBox
+            android:id="@+id/cb_sound"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:button="@drawable/checkbox_selector"
+            android:background="@drawable/checkbox_bg_selector"
+            android:paddingLeft="10.0dip"
+            android:text="@string/scan_prompt_sound"
+            android:textColor="@android:color/black" />
+
+        <CheckBox
+            android:id="@+id/cb_vibrate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.0dip"
+            android:button="@drawable/checkbox_selector"
+            android:background="@drawable/checkbox_bg_selector"
+            android:paddingLeft="10.0dip"
+            android:text="@string/scan_prompt_vibrator"
+            android:textColor="@android:color/black" />
+        
+        <CheckBox
+            android:id="@+id/cb_led"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.0dip"
+            android:button="@drawable/checkbox_selector"
+            android:background="@drawable/checkbox_bg_selector"
+            android:paddingLeft="10.0dip"
+            android:text="@string/scan_prompt_led"
+            android:textColor="@android:color/black" />
+         
+    </LinearLayout>
+
+</RelativeLayout>

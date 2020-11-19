@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.nlscan.uhf.settings"
+    android:versionCode="31"
+    android:versionName="v3.1">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_logo"
+        android:label="@string/app_name"
+        android:theme="@style/MyAppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.nlscan.intent.action.UHF_SETTINGS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".InventoryActivity"
+            android:configChanges="keyboard|keyboardHidden"
+            android:label="@string/inventory_demo"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SearchActivity"
+            android:configChanges="keyboard|keyboardHidden"
+            android:label="@string/scan_connect"
+            android:screenOrientation="portrait" />
+    </application>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+</manifest>

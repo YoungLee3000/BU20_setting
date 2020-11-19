@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UHF设置</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- Common -->
+    <string name="common_setting">设置中...</string>
+    <string name="common_confirm">确定</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_onning">进行中...</string>
+    <string name="success">成功</string>
+    <string name="failed">失败</string>
+    <string name= "common_tip">提示</string>
+    <string name="common_no">否</string>
+    
+    <!-- 设置主界面 -->
+    <string name="power_on">模块上电</string>
+    <string name="power_oning">上电中...</string>
+    <string name="power_on_summary">对UHF模块上电,并进行初始化配置</string>
+    <string name="inventory_demo">盘点测试</string>
+    <string name="read_write_lock">读写锁</string>
+    <string name="read_write_lock_summary">对标签进行读写,锁定,销毁操作</string>
+    <string name="uhf_settings">UHF参数设置</string>
+    <string name="firmware_upgrade">固件升级</string>
+    <string name="trigger_mode">盘点触发按键</string>
+    <string name="trigger_mode_main">使用SCAN键触发</string>
+    <string name="trigger_mode_side">侧面SCAN键触发</string>
+    <string name="trigger_mode_back">枪把SCAN键触发</string>
+    <string name="scan_prompt">盘点提示</string>
+    <string name="scan_prompt_sound">声音</string>
+    <string name="scan_prompt_vibrator">震动</string>
+    <string name="scan_prompt_led">指示灯</string>
+    
+
+    <!-- 盘点测试 -->
+    <string name="tab2_layout_textView1">本次读到标签个数：</string>
+    <string name="tab2_layout_textView2">        共读到标签个数：</string>
+    <string name="tab2_layout_textView3">   标签总次数:</string>
+    <string name="press_again_to_exit"> 再按一次退出程序</string>
+    <string-array name="inventory_table_header">
+        <item>序号</item>
+        <item>EPC ID</item>
+        <item>次数</item>
+        <item>天线</item>
+        <item>协议</item>
+        <item>RSSI</item>
+        <item>频率</item>
+        <item>附加数据</item>
+    </string-array>
+    <string name= "inventory_count">次数</string>
+	<string name="inventory_period">本次盘点工作时长 :  </string>
+
+
+    <string name="reload_module">重载新模块</string>
+    <string name="reload_module_summary">更换模块后需点击此处来重载模块</string>
+    <string name="reload_module_promt">确定要重载新的模块?</string>
+	
+	<string name="restore_default">恢复默认配置</string>
+	<string name="restore_default_promt">您确定将:\n<ul><li>"\t通用配置"</li>\n<li>"\tUHF参数设置"</li></ul>\n\n等数据恢复到默认状态?</string>
+	
+	<string name="power_off_prompt">当前是上电状态,是否下电?</string>
+	<string name="do_power_down">下电</string>
+	
+	<string name="loading_uhf_module">正在检测,请稍后...</string>
+	<string name="uhf_module_unavailable">未检测到UHF设备,请确认是否存在UHF模块并正确安装.</string>
+	<string name="common_exit">退出</string>
+	<string name="search_again">重新检测</string>
+	
+	<string name="power_on_failed_prompt">上电失败,请重新拔插UHF模块.</string>
+	<string name="power_on_success">上电成功.</string>
+
+    <string name="scan_connect">扫码连接</string>
+    <string name="scan_connect_summary">通过扫描二维码连接BLE设备</string>
+    <string name="scan_connect_go">扫码连接(适用于蓝牙-UHF设备)</string>
+    <string name="scan_connect_dialog">设备连接中...</string>
+    <string name="scan_connect_tips">
+        1.扫描蓝牙-UHF设备上的条码进行连接,成功则自动跳转页面<![CDATA[<br/>]]>
+        2.若长时间未能连接,则在设备已开机状态下尝试以下操作:<![CDATA[<br/>]]>
+            <![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]>A.只有蓝牙灯(中间)亮起,则只需<![CDATA[<b>按下一次P键</b>]]>,蓝牙灯开始慢闪<![CDATA[<br/>]]>
+            <![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]>B.蓝牙灯与电池灯(右侧)都亮起,则<![CDATA[<b>长按P键5秒</b>]]>直至蓝牙灯慢闪
+    </string>
+
+</resources>
