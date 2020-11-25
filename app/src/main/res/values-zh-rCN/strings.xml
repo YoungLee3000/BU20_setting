@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">UHF设置</string>
+    <string name="app_name">BU20设置</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     
@@ -32,6 +32,9 @@
     <string name="scan_prompt_sound">声音</string>
     <string name="scan_prompt_vibrator">震动</string>
     <string name="scan_prompt_led">指示灯</string>
+
+    <string name="start_inventory">开启盘点</string>
+    <string name="find_device">查找设备</string>
     
 
     <!-- 盘点测试 -->

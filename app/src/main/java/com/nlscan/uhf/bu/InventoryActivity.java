@@ -72,6 +72,8 @@ public class InventoryActivity extends BaseActivity {
 	private Map<String, String> listHeader = new HashMap<String, String>(); 
 	
 	private long exittime;
+
+	private long gStartReadTime = 0L;
 	
 	private HandlerThread mHandlerThread;
 	private ResultHandler mResultHandler;
@@ -241,6 +243,7 @@ public class InventoryActivity extends BaseActivity {
 	{
 		UHFReader.READER_STATE er = UHFReader.READER_STATE.CMD_FAILED_ERR;
 		er= mUHFMgr.startTagInventory();
+		gStartReadTime = System.currentTimeMillis();
 		if(er == UHFReader.READER_STATE.OK_ERR)
 			keepScreen();
 		else
@@ -537,9 +540,9 @@ public class InventoryActivity extends BaseActivity {
 			Message msg = Message.obtain(mUIHandler,  MSG_REFRESH_RESULT_LIST,tagInfos);
 			mUIHandler.sendMessage(msg);
 			
-			if(startReading > 0)
+			if(gStartReadTime > 0)
 			{
-				long spanTime = System.currentTimeMillis() - startReading;
+				long spanTime = System.currentTimeMillis() - gStartReadTime;
 				long secTime = spanTime/1000;
 				long minutes = secTime/60;
 				long hours = minutes /60;

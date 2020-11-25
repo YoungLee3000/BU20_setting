@@ -33,6 +33,9 @@
     <string name="scan_prompt_vibrator">Vibration</string>
     <string name="scan_prompt_led">LED</string>
 
+    <string name="start_inventory">Start Inventory</string>
+    <string name="find_device">Find Device</string>
+
 
     <!-- 盘点测试 -->
     <string name="tab2_layout_textView1">Tag Count in Current Round:</string>

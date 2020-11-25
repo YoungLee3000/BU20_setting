@@ -233,12 +233,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 			Message msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON, on);
 			msg.sendToTarget();
 			break;
-		case R.id.trigger_mode:
-			showTriggerMode();
-			break;
-		case R.id.inventory_prompt:
-			showPromptSetting();
-			break;
+
 		case R.id.inventory_demo:
 			if( !mUHFMgr.isPowerOn() )
 				break;
@@ -249,6 +244,12 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 				e.printStackTrace();
 			}
 			break;
+
+		case R.id.find_device:
+			mUHFMgr.setParam("FIND_DEVICE","PARAM_FIND_DEVICE","");
+			break;
+
+
 		case R.id.scan_connect:
 			try {
 				header.intent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -257,7 +258,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 				e.printStackTrace();
 			}
 			break;
-		case R.id.read_write_lock:
+
 		case R.id.uhf_func_settings:
 
 			if( !mUHFMgr.isPowerOn() )
@@ -283,15 +284,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 				e.printStackTrace();
 			}
 			break;
-		case  R.id.reload_module:
-			if (mUHFMgr.isPowerOn()){
-				Message msg2 = Message.obtain(gMyHandler, MSG_UHF_POWER_ON, false);
-				msg2.sendToTarget();
-			}
 
-
-			gMyHandler.sendEmptyMessageDelayed(MSG_RELOAD_MODULE_DELAY, 50);
-			break;
 		case R.id.restore_default:
 			showRestoreConfirmWindow();
 			break;
@@ -374,27 +367,6 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 				case R.id.uhf_func_settings:
 					String model = mUHFMgr.getUHFDeviceModel();
 					header.summary = (model == null ?"unknown" : model);
-					break;
-				case R.id.inventory_prompt:
-					boolean soundPrompt = mUHFMgr.isPromptSoundEnable();
-					boolean vibratePrompt = mUHFMgr.isPromptVibrateEnable();
-					boolean ledPrompt = mUHFMgr.isPromptLEDEnable();
-					String prompt_summary = "";
-					if(soundPrompt)
-						prompt_summary += getString(R.string.scan_prompt_sound);
-					if(vibratePrompt)
-					{
-						if(!TextUtils.isEmpty(prompt_summary))
-							prompt_summary += ",";
-						prompt_summary +=  getString(R.string.scan_prompt_vibrator);
-					}
-					if(ledPrompt)
-					{
-						if(!TextUtils.isEmpty(prompt_summary))
-							prompt_summary += ",";
-						prompt_summary +=  getString(R.string.scan_prompt_led);
-					}
-					header.summary = prompt_summary;
 					break;
 				}
 				
@@ -677,10 +649,8 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 				localHolder._switch.setVisibility(View.VISIBLE);
 				localHolder._switch.setChecked(mModuleAvailable && mUHFMgr.isPowerOn());
 				localHolder.tv_title.setTextColor( mModuleAvailable ? Color.BLACK : Color.LTGRAY);
-			} else if(localHeader.id == R.id.trigger_mode 
-					|| localHeader.id == R.id.inventory_prompt
-					|| localHeader.id == R.id.restore_default
-					|| localHeader.id == R.id.reload_module
+			} else if(
+					 localHeader.id == R.id.restore_default
 					|| localHeader.id == R.id.scan_connect){
 				localHolder._switch.setId(R.id.switchWidget);
 				localHolder._switch.setVisibility(View.GONE);

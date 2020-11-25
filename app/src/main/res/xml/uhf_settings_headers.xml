@@ -8,19 +8,9 @@
         android:summary="@string/power_on_summary"
         android:title="@string/power_on" />
 
-    <!-- 触发按键 -->
-    <header
-        android:id="@+id/trigger_mode"
-        android:icon="@drawable/ic_launcher"
-        android:title="@string/trigger_mode" 
-        android:fragment="com.nlscan.uhf.bu.TriggerModeSettingFragment"/>
+
         
-    <!-- 盘点提示 -->
-     <header
-        android:id="@+id/inventory_prompt"
-        android:icon="@drawable/ic_launcher"
-        android:title="@string/scan_prompt" 
-        android:fragment="com.nlscan.uhf.bu.PromptSettingFragment"/>
+
      
     <!-- 盘点测试 -->
     <header
@@ -28,22 +18,11 @@
         android:icon="@drawable/ic_launcher"
         android:title="@string/inventory_demo" >
         <intent
-            android:targetClass="com.nlscan.uhf.settings.InventoryActivity"
-            android:targetPackage="com.nlscan.uhf.settings" />
+            android:targetClass="com.nlscan.uhf.bu.InventoryActivity"
+            android:targetPackage="com.nlscan.uhf.bu" />
     </header>
 
-    <!-- 读写锁 -->
-    <header
-        android:id="@+id/read_write_lock"
-        android:icon="@drawable/ic_launcher"
-        android:title="@string/read_write_lock" >
-        <intent android:action="com.nlscan.intent.action.UHF_READ_WRITE_LOCK" />
-        <!--
-             <intent
-            android:targetClass="com.nlscan.android.scansettings.ReplaceResultSettingActivity"
-            android:targetPackage="com.nlscan.android.scansettings" />
-        -->
-    </header>
+
 
     <!-- 参数设置 -->
     <header
@@ -58,12 +37,7 @@
         -->
     </header>
 
-    <!-- 重新加载模块 -->
-    <header
-        android:id="@+id/reload_module"
-        android:icon="@drawable/ic_launcher"
-        android:title="@string/reload_module"
-        android:summary="@string/reload_module_summary"/>
+
 
 
 
@@ -77,6 +51,12 @@
     </header>
 
 
+    <!-- 查找设备 -->
+    <header
+        android:id="@+id/find_device"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/find_device"/>
+
      <!-- 恢复默认配置 -->
     <header
         android:id="@+id/restore_default"
@@ -84,7 +64,7 @@
         android:title="@string/restore_default"/>
 
 
-    <!-- 参数设置 -->
+    <!-- 扫码连接 -->
     <header
         android:id="@+id/scan_connect"
         android:icon="@drawable/ic_launcher"
