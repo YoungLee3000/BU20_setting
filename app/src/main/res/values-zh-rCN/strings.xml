@@ -81,8 +81,7 @@
     <string name="scan_connect_tips">
         1.扫描蓝牙-UHF设备上的条码进行连接,成功则自动跳转页面<![CDATA[<br/>]]>
         2.若长时间未能连接,则在设备已开机状态下尝试以下操作:<![CDATA[<br/>]]>
-            <![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]>A.只有蓝牙灯(中间)亮起,则只需<![CDATA[<b>按下一次P键</b>]]>,蓝牙灯开始慢闪<![CDATA[<br/>]]>
-            <![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]>B.蓝牙灯与电池灯(右侧)都亮起,则<![CDATA[<b>长按P键5秒</b>]]>直至蓝牙灯慢闪
+            <![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]><![CDATA[<b>长按P键5秒</b>]]>直至蓝牙灯慢闪
     </string>
 
 </resources>

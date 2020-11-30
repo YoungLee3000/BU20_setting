@@ -168,6 +168,8 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 		PermissionUtils.requestAllRuntimePermission(MainActivity.this);
 		
 		mModuleAvailable = (mUHFMgr.getUHFModuleInfo() != null);
+		mUHFMgr.setPromptSoundEnable(false);
+		mUHFMgr.setPromptVibrateEnable(false);
 		if(!mModuleAvailable)
 			gMyHandler.sendEmptyMessageDelayed(MSG_RELOAD_MODULE_DELAY, 50);
 	}

@@ -61,6 +61,7 @@ public class SearchActivity extends BaseActivity {
     private static final int CHANGE_RETRY = 2;
     private static final int CHANGE_TOAST = 3;
     private static final int CHANGE_FIND = 4;
+    private static final int CHANGE_RE_POWER = 5;
     private Timer myTimer = new Timer();
     private static final int TIMEOUT_VAL = 20000;
 
@@ -425,7 +426,7 @@ public class SearchActivity extends BaseActivity {
                 UHFReader.READER_STATE er =  mUHFMgr.powerOn();
                 if (er != UHFReader.READER_STATE.OK_ERR){
                     cancelDialog();
-                    gMyHandler.sendEmptyMessage(CHANGE_TOAST);
+                    gMyHandler.sendEmptyMessage(CHANGE_RE_POWER);
                 }
                 else {
 
@@ -806,6 +807,10 @@ public class SearchActivity extends BaseActivity {
                     break;
                 case CHANGE_FIND:
                     mainActivity.reFind();
+                    break;
+                case CHANGE_RE_POWER:
+                    Toast.makeText(mainActivity,"上电失败，请重新上电", Toast.LENGTH_SHORT).show();
+                    mainActivity.jumpTo();
                     break;
             }
 
