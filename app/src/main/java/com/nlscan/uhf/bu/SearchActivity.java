@@ -34,6 +34,7 @@ import androidx.annotation.Nullable;
 
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFReader;
+import com.xys.libzxing.zxing.activity.CaptureActivity;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
@@ -165,6 +166,7 @@ public class SearchActivity extends BaseActivity {
 
     //打开蓝牙后的回调
     private static final int FIND_DEVICE = 1;
+    private static final int FLAG_SCAN_RETURN = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -368,34 +370,28 @@ public class SearchActivity extends BaseActivity {
 
 
 
+        //找到了设备
         if (scanAddress != null   && ! "".equals(scanAddress)){
             connectTarget(scanAddress);
         }
+        //未找到设备
         else {
 
             int a2dp = mBluetoothAdapter.getProfileConnectionState(4);
             if (a2dp == BluetoothProfile.STATE_CONNECTED){
-                powerOn();
-            }
-            else{//如果未和绑定的设备连接,则解除绑定
-                if (isDialogShow()){
-//                    mBluetoothLeScanner.stopScan(mLeScanCallback);
-                    Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
-                    for(BluetoothDevice device : bondedDevices) {
-                        try {
-                            Class btDeviceCls = BluetoothDevice.class;
-                            Method removeBond = btDeviceCls.getMethod("removeBond");
-                            removeBond.setAccessible(true);
-                            removeBond.invoke(device);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    Log.d(TAG,"remove bond");
-//                    mBluetoothLeScanner.startScan(mLeScanCallback);
-                    gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,1000);
+
+                //当前扫码的地址是否已经连接
+                if (ifCurrentConnect(scanAddress)){
+                    powerOn();
+                }
+                else{
+                    reFindCmd();
                 }
 
+            }
+            else{//如果未和绑定的设备连接,则解除绑定
+
+                reFindCmd();
                 Toast.makeText(this,"未搜索到该设备,请打开设备！",Toast.LENGTH_SHORT).show();
             }
 
@@ -403,6 +399,18 @@ public class SearchActivity extends BaseActivity {
 
         }
 
+    }
+
+
+    //发送重连指令
+    private void reFindCmd(){
+        if (isDialogShow()){
+//                    mBluetoothLeScanner.stopScan(mLeScanCallback);
+            removeAll();
+            Log.d(TAG,"remove bond");
+//                    mBluetoothLeScanner.startScan(mLeScanCallback);
+            gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,1000);
+        }
     }
 
 
@@ -430,9 +438,42 @@ public class SearchActivity extends BaseActivity {
 
     }
 
+
+    //判断当前地址的设备是否已经连接
+    private boolean ifCurrentConnect(String scanAddress){
+        Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
+        for(BluetoothDevice device : bondedDevices) {
+            if (device != null){
+                String address = device.getAddress();
+                if (address !=null && address.equals(scanAddress)) return  true;
+            }
+        }
+
+        return false;
+    }
+
+
+    //移除所有已经绑定的设备
+    private void removeAll(){
+        Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
+        for(BluetoothDevice device : bondedDevices) {
+            try {
+                Class btDeviceCls = BluetoothDevice.class;
+                Method removeBond = btDeviceCls.getMethod("removeBond");
+                removeBond.setAccessible(true);
+                removeBond.invoke(device);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     //连接指定设备
     private void connectTarget(String address){
 
+
+        removeAll();
 
 
         mDeviceAddress = address;
@@ -534,25 +575,26 @@ public class SearchActivity extends BaseActivity {
             BluetoothDevice device = result.getDevice();
             if (device != null){
                 Log.d(TAG,"the device address " + device.getAddress() );
+                mSerialMac.put(device.getAddress().toUpperCase(),device.getAddress());
             }
 //            int dT =  device.getType();
 
 
 
-            if (scanRecord !=  null && device !=null ){
-                byte[] bytes  = scanRecord.getBytes();
-                String str = HexUtil.bytesToHexString(bytes);
-
-                String manuInfo = getManuInfo(str);
-                if (manuInfo.startsWith("ff00")){
-                    String manuInfoDecode = HexUtil.hexStringToString(manuInfo.substring(4));
-                    String serialInfo =  manuInfoDecode == null ? "" : manuInfoDecode.toUpperCase() ;
-                    if (!mSerialMac.containsKey(serialInfo))
-                        mSerialMac.put(serialInfo,device.getAddress());
-                    Log.d(TAG,"the serialInfo " + serialInfo + " device " + device.getAddress());
-                }
-
-            }
+//            if (scanRecord !=  null && device !=null ){
+//                byte[] bytes  = scanRecord.getBytes();
+//                String str = HexUtil.bytesToHexString(bytes);
+//
+//                String manuInfo = getManuInfo(str);
+//                if (manuInfo.startsWith("ff00")){
+//                    String manuInfoDecode = HexUtil.hexStringToString(manuInfo.substring(4));
+//                    String serialInfo =  manuInfoDecode == null ? "" : manuInfoDecode.toUpperCase() ;
+//                    if (!mSerialMac.containsKey(serialInfo))
+//                        mSerialMac.put(serialInfo,device.getAddress());
+//                    Log.d(TAG,"the serialInfo " + serialInfo + " device " + device.getAddress());
+//                }
+//
+//            }
 
 
 
@@ -620,6 +662,14 @@ public class SearchActivity extends BaseActivity {
                 mBluetoothLeScanner.startScan(mLeScanCallback);
 //                mBluetoothAdapter.startLeScan(mLeScanCallback);
                 break;
+            case FLAG_SCAN_RETURN:
+                if (data != null) {
+                    Bundle bundle = data.getExtras();
+                    String scanResult = bundle.getString("result");
+                    Log.d(TAG,"the result is" + scanResult);
+                    obtainAddress(scanResult);
+                }
+                break;
             default:
                 break;
         }
@@ -666,15 +716,21 @@ public class SearchActivity extends BaseActivity {
 
         mBluetoothLeScanner.startScan(mLeScanCallback);
 
-        //邮政广播
-        Intent intent = new Intent("ACTION_BAR_TRIGSCAN");
-        intent.putExtra("timeout", 3);//单位为秒，值为int类型，且不超过9秒
-        sendBroadcast(intent);
+//        //邮政广播
+//        Intent intent = new Intent("ACTION_BAR_TRIGSCAN");
+//        intent.putExtra("timeout", 3);//单位为秒，值为int类型，且不超过9秒
+//        sendBroadcast(intent);
+//
+//        //普通广播
+//        Intent intent1 = new Intent("nlscan.action.SCANNER_TRIG");
+//        intent1.putExtra("SCAN_TIMEOUT", 3);//单位为秒，值为int类型，且不超过9秒
+//        sendBroadcast(intent1);//content.
 
-        //普通广播
-        Intent intent1 = new Intent("nlscan.action.SCANNER_TRIG");
-        intent1.putExtra("SCAN_TIMEOUT", 3);//单位为秒，值为int类型，且不超过9秒
-        sendBroadcast(intent1);//content.
+
+        Intent intent = new Intent(this, CaptureActivity.class);
+        startActivityForResult(intent, FLAG_SCAN_RETURN);
+
+
 
     }
 

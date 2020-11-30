@@ -71,8 +71,8 @@
         android:title="@string/scan_connect"
         android:summary="@string/scan_connect_summary">
         <intent
-            android:targetClass="com.nlscan.uhf.settings.SearchActivity"
-            android:targetPackage="com.nlscan.uhf.settings" />
+            android:targetClass="com.nlscan.uhf.bu.SearchActivity"
+            android:targetPackage="com.nlscan.uhf.bu" />
 
     </header>
         

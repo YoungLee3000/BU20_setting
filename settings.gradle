@@ -1,2 +1,3 @@
 rootProject.name='UHF_Settings'
-include ':app'
+include ':app', ':libzxing_BU'
+project(':libzxing_BU').projectDir = new File('libzxing')
