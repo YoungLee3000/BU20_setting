@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:lineSpacingExtra="10dp"
                 android:text="@string/scan_connect_tips"/>
 

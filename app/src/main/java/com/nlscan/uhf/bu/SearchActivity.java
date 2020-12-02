@@ -25,6 +25,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -348,6 +349,7 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void run() {
                 cancelDialog();
+                gMyHandler.sendEmptyMessage(CHANGE_FAIL);
             }
         },TIMEOUT_VAL);
 
@@ -385,8 +387,8 @@ public class SearchActivity extends BaseActivity {
             if (a2dp == BluetoothProfile.STATE_CONNECTED){
 
                 //当前扫码的地址是否已经连接
-                if (ifCurrentConnect(scanAddress)){
-                     powerOn();
+                if (ifCurrentConnect(mScanSerial)){
+                    gMyHandler.sendEmptyMessage(CHANGE_SUCCESS);
                 }
                 else{
                     reFindCmd();
@@ -453,7 +455,7 @@ public class SearchActivity extends BaseActivity {
         for(BluetoothDevice device : bondedDevices) {
             if (device != null){
                 String address = device.getAddress();
-                if (address !=null && address.equals(scanAddress)) return  true;
+                if (address !=null && address.toUpperCase().equals(scanAddress)) return  true;
             }
         }
 
@@ -713,8 +715,28 @@ public class SearchActivity extends BaseActivity {
         mDialog.setCancelable(true);// 设置是否可以通过点击Back键取消
         mDialog.setCanceledOnTouchOutside(true);// 设置在点击Dialog外是否取消Dialog进度条
         // 设置提示的title的图标，默认是没有的，如果没有设置title的话只设置Icon是不会显示图标的
+
         mDialog.setMessage(message);
         mDialog.show();
+
+        View v = mDialog.getWindow().getDecorView();
+        setDialogText(v);
+    }
+
+
+
+    //遍历整个View中的textview，然后设置其字体大小
+    private void setDialogText(View v){
+        if(v instanceof ViewGroup){
+            ViewGroup parent=(ViewGroup)v;
+            int count=parent.getChildCount();
+            for(int i=0;i<count;i++){
+                View child=parent.getChildAt(i);
+                setDialogText(child);
+            }
+        }else if(v instanceof TextView){
+            ((TextView)v).setTextSize(22);
+        }
     }
 
 
@@ -812,7 +834,7 @@ public class SearchActivity extends BaseActivity {
                     mainActivity.reConnect();
                     break;
                 case CHANGE_FAIL:
-                    Toast.makeText(mainActivity,"连接失败，请再次尝试", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mainActivity,"连接失败，请再次扫码", Toast.LENGTH_SHORT).show();
                     break;
                 case CHANGE_FIND:
 //                    Toast.makeText(mainActivity,"重新搜索设备中...", Toast.LENGTH_SHORT).show();
