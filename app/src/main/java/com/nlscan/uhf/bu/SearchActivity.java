@@ -25,6 +25,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -59,11 +60,11 @@ public class SearchActivity extends BaseActivity {
     private MyHandler gMyHandler = new MyHandler(this);
     private static final int CHANGE_SUCCESS = 1;
     private static final int CHANGE_RETRY = 2;
-    private static final int CHANGE_TOAST = 3;
+    private static final int CHANGE_FAIL = 3;
     private static final int CHANGE_FIND = 4;
     private static final int CHANGE_RE_POWER = 5;
     private Timer myTimer = new Timer();
-    private static final int TIMEOUT_VAL = 20000;
+    private static final int TIMEOUT_VAL = 30000;
 
 
     //UHF相关
@@ -123,7 +124,7 @@ public class SearchActivity extends BaseActivity {
                 if (   mDeviceAddress.equals(   intentAddress)){
 //                    Toast.makeText(SearchActivity.this,"连接成功" ,Toast.LENGTH_SHORT).show();
 //                    jumpTo();
-                    powerOn();
+                     powerOn();
 
                 }
 
@@ -173,6 +174,8 @@ public class SearchActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
 
@@ -383,7 +386,7 @@ public class SearchActivity extends BaseActivity {
 
                 //当前扫码的地址是否已经连接
                 if (ifCurrentConnect(scanAddress)){
-                    powerOn();
+                     powerOn();
                 }
                 else{
                     reFindCmd();
@@ -405,27 +408,31 @@ public class SearchActivity extends BaseActivity {
 
     //发送重连指令
     private void reFindCmd(){
-        if (isDialogShow()){
+        if (!isDialogShow()) return;
 //                    mBluetoothLeScanner.stopScan(mLeScanCallback);
             removeAll();
             Log.d(TAG,"remove bond");
 //                    mBluetoothLeScanner.startScan(mLeScanCallback);
             gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,1000);
-        }
+
     }
 
 
     //开始尝试上电
     private void powerOn(){
 
+        if(!isDialogShow()) return;
         myTimer.cancel();
+        mDialog.setMessage("上电中,请不要退出界面");
+
+//        Toast.makeText(this,"上电中,请不要退出界面",Toast.LENGTH_SHORT).show();
 
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 UHFReader.READER_STATE er =  mUHFMgr.powerOn();
                 if (er != UHFReader.READER_STATE.OK_ERR){
-                    cancelDialog();
+
                     gMyHandler.sendEmptyMessage(CHANGE_RE_POWER);
                 }
                 else {
@@ -507,7 +514,7 @@ public class SearchActivity extends BaseActivity {
 
 
                 if (isDialogShow()){
-                    gMyHandler.sendEmptyMessageDelayed(CHANGE_RETRY,500);
+                    gMyHandler.sendEmptyMessageDelayed(CHANGE_RETRY,1000);
                 }
             }
         }
@@ -793,22 +800,27 @@ public class SearchActivity extends BaseActivity {
             switch (msg.what) {
 
                 case CHANGE_SUCCESS:
-                    Toast.makeText(mainActivity,"连接成功", Toast.LENGTH_SHORT).show();
                     mainActivity.cancelDialog();
+                    Toast.makeText(mainActivity,"连接成功", Toast.LENGTH_SHORT).show();
                     mainActivity.jumpTo();
                     break;
                 case CHANGE_RETRY:
 //                    mainActivity.cancelDialog();
 //                    Toast.makeText(mainActivity,str,Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mainActivity,"重新建立配对中,请按住配对键...", Toast.LENGTH_SHORT).show();
+                    mainActivity.mDialog.setMessage("重新建立配对中,请按住配对键...");
                     mainActivity.reConnect();
                     break;
-                case CHANGE_TOAST:
+                case CHANGE_FAIL:
                     Toast.makeText(mainActivity,"连接失败，请再次尝试", Toast.LENGTH_SHORT).show();
                     break;
                 case CHANGE_FIND:
+//                    Toast.makeText(mainActivity,"重新搜索设备中...", Toast.LENGTH_SHORT).show();
+                    mainActivity.mDialog.setMessage("重新搜索设备中,若长时间搜索不到请重启读卡器...");
                     mainActivity.reFind();
                     break;
                 case CHANGE_RE_POWER:
+                    mainActivity.cancelDialog();
                     Toast.makeText(mainActivity,"上电失败，请重新上电", Toast.LENGTH_SHORT).show();
                     mainActivity.jumpTo();
                     break;

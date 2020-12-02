@@ -102,7 +102,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 				if(er == UHFReader.READER_STATE.OK_ERR){
 					Toast.makeText(mainActivity, mainActivity.getString(R.string.power_on_success), Toast.LENGTH_SHORT).show();
 				}else{
-					Toast.makeText(mainActivity, mainActivity.getString(R.string.power_on_failed_prompt)+", er:  "+er, Toast.LENGTH_SHORT).show();
+					Toast.makeText(mainActivity, mainActivity.getString(R.string.power_on_failed_prompt), Toast.LENGTH_SHORT).show();
 				}
 				break;
 			case MSG_UPDATE_VIEW :
