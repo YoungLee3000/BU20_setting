@@ -8,8 +8,8 @@ android {
         applicationId "com.nlscan.uhf.bu"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 35
-        versionName "v3.5"
+        versionCode 36
+        versionName "v3.6"
 
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
