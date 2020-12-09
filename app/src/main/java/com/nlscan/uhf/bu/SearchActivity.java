@@ -412,7 +412,7 @@ public class SearchActivity extends BaseActivity {
     private void reFindCmd(){
         if (!isDialogShow()) return;
 //                    mBluetoothLeScanner.stopScan(mLeScanCallback);
-            removeAll();
+//            removeAll();
             Log.d(TAG,"remove bond");
 //                    mBluetoothLeScanner.startScan(mLeScanCallback);
             gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,1000);
@@ -585,7 +585,10 @@ public class SearchActivity extends BaseActivity {
             BluetoothDevice device = result.getDevice();
             if (device != null){
                 Log.d(TAG,"the device address " + device.getAddress() );
-                mSerialMac.put(device.getAddress().toUpperCase(),device.getAddress());
+                Log.d(TAG,"the device name " + device.getName() );
+                String name = device.getName();
+                if (name != null)
+                    mSerialMac.put(device.getName().toUpperCase(),device.getAddress());
             }
 //            int dT =  device.getType();
 
