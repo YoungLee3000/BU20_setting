@@ -4,6 +4,7 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -27,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
 
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFModuleInfo;
@@ -166,7 +169,10 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 		initActionBar();
 		//动态权限申请
 		PermissionUtils.requestAllRuntimePermission(MainActivity.this);
-		
+
+
+
+
 		mModuleAvailable = (mUHFMgr.getUHFModuleInfo() != null);
 		mUHFMgr.setPromptSoundEnable(false);
 		mUHFMgr.setPromptVibrateEnable(false);

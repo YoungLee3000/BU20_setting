@@ -1,5 +1,7 @@
 package com.nlscan.uhf.bu;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -16,7 +18,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,7 +37,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 
+import com.huawei.hms.hmsscankit.ScanUtil;
+import com.huawei.hms.ml.scan.HmsScan;
+import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFReader;
 import com.xys.libzxing.zxing.activity.CaptureActivity;
@@ -169,7 +178,17 @@ public class SearchActivity extends BaseActivity {
 
     //打开蓝牙后的回调
     private static final int FIND_DEVICE = 1;
+
+    //扫码回调
     private static final int FLAG_SCAN_RETURN = 2;
+    private static final int REQUEST_CODE_SCAN_ONE = 3;
+    private static final int REQUEST_CODE_DEFINE = 4;
+
+
+
+    //申请权限回调
+    public static final int CAMERA_REQ_CODE = 111;
+    public static final int DEFINED_CODE = 222;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +199,10 @@ public class SearchActivity extends BaseActivity {
 
 
 
+        //DEFINED_CODE为用户自定义，用于接收权限校验结果
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
+                DEFINED_CODE);
 
         initGps();
         initActionBar();
@@ -190,6 +213,49 @@ public class SearchActivity extends BaseActivity {
 
 
     }
+
+
+    //实现“onRequestPermissionsResult”函数接收校验权限结果
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        //判断“requestCode”是否为申请权限时设置请求码CAMERA_REQ_CODE，然后校验权限开启状态
+
+        if (permissions == null || grantResults == null) {
+            return;
+        }
+
+        if (grantResults.length < 2 || grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        //Default View Mode
+        if (requestCode == CAMERA_REQ_CODE) {
+            //调用扫码接口，构建扫码能力，需您实现
+
+            btnScan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    readCode();
+                }
+            });
+        }
+        //Customized View Mode
+        else if (requestCode == DEFINED_CODE) {
+
+
+            btnScan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(SearchActivity.this, DefinedActivity.class);
+                    SearchActivity.this.startActivityForResult(intent, REQUEST_CODE_DEFINE);
+                }
+            });
+
+        }
+
+
+
+    }
+
 
 
     @Override
@@ -294,12 +360,7 @@ public class SearchActivity extends BaseActivity {
     private void initView(){
         btnScan = (Button)  findViewById(R.id.btn_scan);
 
-        btnScan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                readCode();
-            }
-        });
+
 
         textView = (TextView) findViewById(R.id.text_tip);
         textView.setText(Html.fromHtml( getString(R.string.scan_connect_tips)));
@@ -663,9 +724,9 @@ public class SearchActivity extends BaseActivity {
         finish();
     }
 
-
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode){
@@ -681,6 +742,20 @@ public class SearchActivity extends BaseActivity {
                     String scanResult = bundle.getString("result");
                     Log.d(TAG,"the result is" + scanResult);
                     obtainAddress(scanResult);
+                }
+                break;
+            case REQUEST_CODE_SCAN_ONE:
+            case REQUEST_CODE_DEFINE:
+                if (data != null){
+                    HmsScan obj = data.getParcelableExtra(ScanUtil.RESULT);
+                    if (obj != null){
+                        String scanResultHms = obj.getOriginalValue();
+                        Log.d(TAG,"the result is" + scanResultHms);
+                        obtainAddress(scanResultHms);
+                    }
+                    else{
+                    Toast.makeText(this,"无效码！",Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             default:
@@ -760,8 +835,14 @@ public class SearchActivity extends BaseActivity {
 //        sendBroadcast(intent1);//content.
 
 
-        Intent intent = new Intent(this, CaptureActivity.class);
-        startActivityForResult(intent, FLAG_SCAN_RETURN);
+        //-------------zxing扫码--------------------
+//        Intent intent = new Intent(this, CaptureActivity.class);
+//        startActivityForResult(intent, FLAG_SCAN_RETURN);
+
+
+        //---------------huawei扫码
+        ScanUtil.startScan(this, REQUEST_CODE_SCAN_ONE,
+                new HmsScanAnalyzerOptions.Creator().create());
 
 
 

@@ -160,4 +160,19 @@
       <!-- preference category字体颜色 -->
     <color name="common_title_little_text_color">#FF1E83DE</color>
     <color name="main_menu_selected">#1fcd7e</color>
+
+
+
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="viewfinder_corner">#FF1FB3E2</color>
+    <color name="viewfinder_laser">#FF1FB3E2</color>
+    <color name="viewfinder_result_point_color">#C0FFBD21</color>
+    <color name="viewfinder_text_color">#FFC0C0C0</color>
+    <color name="viewfinder_text_color2">#30ff54</color>
+    <color name="viewfinder_text_color3">#ffffff</color>
+    <color name="viewfinder_text_color4">#C0C0C0</color>
+    <color name="black_overlay">#66000000</color>
+
+
+
 </resources>

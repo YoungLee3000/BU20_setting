@@ -1,0 +1,14 @@
+{
+	"client":{
+		"appType":"1",
+		"cp_id":"2850086000445290099",
+		"product_id":"736430079244735354",
+		"client_id":"514151106830402624",
+		"client_secret":"57135E527C00C35516CC947FC1221BD4ECECFA772242FF36B08FAAA45FBC11B4",
+		"project_id":"736430079244735354",
+		"app_id":"103457973",
+		"api_key":"CgB6e3x9+RkHY7zrLB89eRN4gGLaG99JprRKAef2ofjIPh4tgNwmcHd2OL3rKTLLYYiFb5uNh5EaR6XoXPuIIx0R",
+		"package_name":"com.nlscan.uhf.bu"
+	},
+	"configuration_version":"1.0"
+}
