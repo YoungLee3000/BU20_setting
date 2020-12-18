@@ -71,19 +71,32 @@ public class HexUtil {
 		return false;
 	}
 
-	public static final String bytesToHexString(byte[] bArray) {
-		if(bArray == null || bArray.length <= 0)
+//	public static final String bytesToHexString(byte[] bArray) {
+//		if(bArray == null || bArray.length <= 0)
+//			return null;
+//		StringBuffer sb = new StringBuffer(bArray.length);
+//		String sTemp;
+//		for (int i = 0; i < bArray.length; i++) {
+//			sTemp = Integer.toHexString(0xFF & bArray[i]);
+//			if (sTemp.length() < 2)
+//				sb.append(0);
+//			sb.append(sTemp);
+//		}
+//		return sb.toString();
+//	}
+
+
+	public static String bytesToHexString(byte[] data) {
+		StringBuilder stringBuilder = new StringBuilder("");
+		if (data == null || data.length <= 0) {
 			return null;
-		StringBuffer sb = new StringBuffer(bArray.length);
-		String sTemp;
-		for (int i = 0; i < bArray.length; i++) {
-			sTemp = Integer.toHexString(0xFF & bArray[i]);
-			if (sTemp.length() < 2)
-				sb.append(0);
-			sb.append(sTemp);
 		}
-		return sb.toString();
+		for(byte byteChar : data)
+			stringBuilder.append(String.format("%02X", byteChar));
+		return stringBuilder.toString();
 	}
+
+
 	
 	/**
 	 * 将16进制字符串转成二进制字节数据，目前此函数只支持长度不超过600个字符的16进制字符串的转换。

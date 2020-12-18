@@ -53,6 +53,9 @@
     <string name="restore_default_promt">Comfirm to restore :\n<ul><li>"\tCommon settings"</li>\n<li>"\tUHF settings"</li></ul>\n\nto default?</string>
     <string name="power_off_prompt">Do power off ?</string>
 
+    <string name="reset_factory">Reset reader to factory</string>
+    <string name="factory_promt">Confirm to reset to factory?</string>
+
     <string name="do_power_down">Power off</string>
     <string name="loading_uhf_module">Loading module...</string>
 
@@ -131,5 +134,13 @@
     <string name="mwc_subject">About Scan Kit</string>
     <string name="mwc_detail">An in-app scanner for 1D and 2D barcodes connects your app to real-world scenarios and helps you build powerful code scanning capabilities with a minimum of 5 lines of code.</string>
     <string name="scan_showresult">Scan results will show on screen</string>
+
+
+
+
+    <string name="start_read">Start read</string>
+    <string name="stop_read">Stop read</string>
+    <string name="clear_data">Clear data</string>
+    <string name="save_json">Save json</string>
 
 </resources>

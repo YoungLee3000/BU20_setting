@@ -57,6 +57,11 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 	private final static int MSG_RELOAD_MODULE_DELAY = 0x07;
 	private final static int MSG_LOAD_MODULE_COMPLETED = 0x08;
 
+
+	//
+    private final static int FUN_RESTORE = 21;
+    private final static int FUN_FACTORY = 22;
+
 	private List<Header> myHeaders = new ArrayList<>();
 
 
@@ -294,9 +299,13 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 			break;
 
 		case R.id.restore_default:
-			showRestoreConfirmWindow();
+			showRestoreConfirmWindow(FUN_RESTORE);
 			break;
-		default:
+
+        case  R.id.reset_factory:
+            showRestoreConfirmWindow(FUN_FACTORY);
+            break;
+        default:
 			super.onHeaderClick(header, position);
 			break;
 		}
@@ -414,7 +423,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 	}
 
 
-	private synchronized void showRestoreConfirmWindow()
+	private synchronized void showRestoreConfirmWindow(final int funType)
 	{
 		if(mRestoreDialog != null)
 		{
@@ -424,8 +433,16 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 		}
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-		builder.setTitle(R.string.restore_default);
-		builder.setMessage(getString(R.string.restore_default_promt));
+
+		if (funType == FUN_RESTORE){
+            builder.setTitle(R.string.restore_default);
+            builder.setMessage(getString(R.string.restore_default_promt));
+        }
+		else {
+            builder.setTitle(R.string.reset_factory);
+            builder.setMessage(getString(R.string.factory_promt));
+        }
+
 		builder.setPositiveButton(R.string.common_confirm, new DialogInterface.OnClickListener() {
 			
 			@Override
@@ -435,7 +452,16 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 					
 					@Override
 					public void run() {
-						boolean suc = mUHFMgr.restoreDefaultSettings();
+						boolean suc = true;
+						if (funType == FUN_RESTORE){
+						    suc = mUHFMgr.restoreDefaultSettings();
+							mAdapter.notifyDataSetChanged();
+                        }
+						else{
+						    mUHFMgr.setParam("RESTORE_FACTORY","PARAM_RESTORE_FACTORY","");
+                        }
+
+
 						if(suc)
 							gMyHandler.sendEmptyMessage(MSG_RESTORE_SUCCESS);
 						else

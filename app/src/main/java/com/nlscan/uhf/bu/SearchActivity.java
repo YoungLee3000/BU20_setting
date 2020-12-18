@@ -55,7 +55,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SearchActivity extends BaseActivity {
+public class SearchActivity extends Activity {
 
 
     //扫码广播相关

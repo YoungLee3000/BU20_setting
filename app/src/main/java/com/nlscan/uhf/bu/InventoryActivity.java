@@ -31,9 +31,14 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.nlscan.android.uhf.TagInfo;
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFReader;
+import com.nlscan.luggage.DataKey;
+
+
 
 public class InventoryActivity extends BaseActivity {
 
@@ -49,6 +54,7 @@ public class InventoryActivity extends BaseActivity {
 								btn_stop_read,
 								btn_clear,
 								btn_lock,
+								btn_save,
 								btn_settings;
 	
 	private TextView tv_once,
@@ -158,6 +164,9 @@ public class InventoryActivity extends BaseActivity {
 
 	private void initView()
 	{
+
+		FileUtil.createDir(filePath);
+
 		btn_power_on = (Button) findViewById(R.id.btn_power_on);
 		btn_power_off =  (Button)  findViewById(R.id.btn_power_off);
 		btn_start_read = (Button)  findViewById(R.id.btn_start_read);
@@ -165,6 +174,7 @@ public class InventoryActivity extends BaseActivity {
 		btn_clear =  (Button) findViewById(R.id.btn_clear);
 		btn_lock =  (Button) findViewById(R.id.btn_lock);
 		btn_settings =  (Button) findViewById(R.id.btn_settings);
+		btn_save = (Button) findViewById(R.id.btn_save);
 		tv_span_time =  (TextView) findViewById(R.id.tv_span_time);
 		
 		btn_power_on.setVisibility(View.GONE);
@@ -194,6 +204,7 @@ public class InventoryActivity extends BaseActivity {
 		btn_stop_read.setOnClickListener(mClick);
 		btn_clear.setOnClickListener(mClick);
 		btn_lock.setOnClickListener(mClick);
+		btn_save.setOnClickListener(mClick);
 		btn_settings.setOnClickListener(mClick);
 	}
 	
@@ -285,6 +296,77 @@ public class InventoryActivity extends BaseActivity {
 		
 		Adapter.notifyDataSetChanged();
 		
+	}
+
+
+	private static final String CSV_FILE_1 = "/sdcard/myLuggage/flight_data_1.json";
+	private static final String CSV_FILE_2 = "/sdcard/myLuggage/flight_data_2.json";
+	private static final String CSV_FILE_3 = "/sdcard/myLuggage/flight_data_3.json";
+	private static final String CSV_FILE_3_1 = "/sdcard/myLuggage/flight_data_3_1.json";
+	private static final String CSV_FILE_4 = "/sdcard/myLuggage/flight_data_4.json";
+	private String filePath = "/sdcard/myLuggage/";
+
+	//保存UHF标签成json文件
+	private void saveData(){
+
+		JSONArray relArray = new JSONArray();
+
+		int size = ListMs.size();
+		int halfSize = size / 2;
+
+
+		JSONObject jsonObject1 = new JSONObject();
+		jsonObject1.put(DataKey.J_FLIGHT_ID,"H120");
+		jsonObject1.put(DataKey.J_FLIGHT_TIME,"2020-10-10 15:45:00");
+		jsonObject1.put(DataKey.J_BOX_START,"BJ");
+		jsonObject1.put(DataKey.J_BOX_DEST,"SH");
+		JSONArray epcArray1 = new JSONArray();
+		for (int i=1; i<halfSize + 1; i++){
+			Map<String,?> map =    ListMs.get(i);
+			String epcId =(String) map.get(Coname[1]);
+			JSONObject epcBox = new JSONObject();
+			epcBox.put(DataKey.J_EPC_ID,epcId);
+			epcBox.put(DataKey.J_BOX_ID,epcId);
+			epcArray1.add(epcBox);
+		}
+		jsonObject1.put(DataKey.JA_EPC_BOX_ARRAY,epcArray1);
+
+		relArray.add(jsonObject1);
+
+
+
+		JSONObject jsonObject2 = new JSONObject();
+		jsonObject2.put(DataKey.J_FLIGHT_ID,"H220");
+		jsonObject2.put(DataKey.J_FLIGHT_TIME,"2020-10-10 14:45:00");
+		jsonObject2.put(DataKey.J_BOX_START,"PL");
+		jsonObject2.put(DataKey.J_BOX_DEST,"TH");
+		JSONArray epcArray2 = new JSONArray();
+		for (int i=halfSize+1; i<size; i++){
+			Map<String,?> map =    ListMs.get(i);
+			String epcId =(String) map.get(Coname[1]);
+			JSONObject epcBox = new JSONObject();
+			epcBox.put(DataKey.J_EPC_ID,epcId);
+			epcBox.put(DataKey.J_BOX_ID,epcId);
+			epcArray2.add(epcBox);
+		}
+		jsonObject2.put(DataKey.JA_EPC_BOX_ARRAY,epcArray2);
+
+		relArray.add(jsonObject2);
+
+
+		String relStr = relArray.toJSONString();
+
+		FileUtil.writeFile(relStr,CSV_FILE_1);
+		FileUtil.writeFile(relStr,CSV_FILE_2);
+		FileUtil.writeFile(relStr,CSV_FILE_3);
+		FileUtil.writeFile(relStr,CSV_FILE_3_1);
+		FileUtil.writeFile(relStr,CSV_FILE_4);
+
+
+		Toast.makeText(this,"保存成功!",Toast.LENGTH_SHORT).show();
+
+
+
 	}
 	
 	private void assesResult(Parcelable[] tagInfos)
@@ -456,6 +538,10 @@ public class InventoryActivity extends BaseActivity {
 			case R.id.btn_clear:
 				clearData();
 				break;
+			case R.id.btn_save:
+				saveData();
+				break;
+
 			}
 		}
 	};

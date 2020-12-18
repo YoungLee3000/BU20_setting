@@ -60,9 +60,15 @@
     <string name="reload_module_summary">更换模块后需点击此处来重载模块</string>
     <string name="reload_module_promt">确定要重载新的模块?</string>
 	
-	<string name="restore_default">恢复默认配置</string>
+	<string name="restore_default">重置默认参数</string>
+
 	<string name="restore_default_promt">您确定将:\n<ul><li>"\t通用配置"</li>\n<li>"\tUHF参数设置"</li></ul>\n\n等数据恢复到默认状态?</string>
-	
+
+
+    <string name="reset_factory">读卡器恢复出厂</string>
+    <string name="factory_promt">确定将读卡器恢复出厂?</string>
+
+
 	<string name="power_off_prompt">当前是上电状态,是否下电?</string>
 	<string name="do_power_down">下电</string>
 	
@@ -128,6 +134,13 @@
     <string name="mwc_subject">关于Scan Kit</string>
     <string name="mwc_detail">适用于一维和二维条形码的应用程序内扫描器可将您的应用程序连接到实际场景，并帮助您构建最少5行代码的强大代码扫描功能。</string>
     <string name="scan_showresult">扫码结果会在屏幕中直接展示</string>
+
+
+
+    <string name="start_read">开始</string>
+    <string name="stop_read">结束</string>
+    <string name="clear_data">清除</string>
+    <string name="save_json">保存</string>
 
 
 

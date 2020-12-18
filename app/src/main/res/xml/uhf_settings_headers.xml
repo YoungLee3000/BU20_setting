@@ -63,6 +63,12 @@
         android:icon="@drawable/ic_launcher"
         android:title="@string/restore_default"/>
 
+    <!-- 恢复默认配置 -->
+    <header
+        android:id="@+id/reset_factory"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/reset_factory"/>
+
 
     <!-- 扫码连接 -->
     <header
