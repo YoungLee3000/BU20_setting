@@ -455,7 +455,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 						boolean suc = true;
 						if (funType == FUN_RESTORE){
 						    suc = mUHFMgr.restoreDefaultSettings();
-							mAdapter.notifyDataSetChanged();
+//							mAdapter.notifyDataSetChanged();
                         }
 						else{
 						    mUHFMgr.setParam("RESTORE_FACTORY","PARAM_RESTORE_FACTORY","");

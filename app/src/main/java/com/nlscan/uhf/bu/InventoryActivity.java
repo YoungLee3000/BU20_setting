@@ -1,5 +1,6 @@
 package com.nlscan.uhf.bu;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -583,34 +584,43 @@ public class InventoryActivity extends BaseActivity {
 	}//end MyAdapter
 	
 	private final static int MSG_REFRESH_RESULT_LIST = 0x01;
-	
-	private Handler mUIHandler = new Handler(){
 
-		@Override
+
+	private UIHandler mUIHandler = new UIHandler(this);
+	static class UIHandler extends Handler{
+
+		private SoftReference<InventoryActivity> mySoftReference;
+
+		public UIHandler(InventoryActivity inventoryActivity) {
+			this.mySoftReference = new SoftReference<>(inventoryActivity);
+		}
+
 		public void handleMessage(Message msg) {
+
+			final InventoryActivity myActivity = mySoftReference.get();
 			
 			switch (msg.what) {
 				
 			case MSG_REFRESH_RESULT_LIST:
 				
 				Parcelable[] results = (Parcelable[]) msg.obj;
-				assesResult(results);
-				int cll = TagsMap.size();
+				myActivity.assesResult(results);
+				int cll = myActivity.TagsMap.size();
 				if (cll < 0)
 					cll = 0;
 				
 				int curTagCount = results.length;
 				int totalTagCount = cll;
 				
-				tv_once.setText(String.valueOf(curTagCount));
-				tv_tags.setText(String.valueOf(totalTagCount));
-				tv_total_freq.setText(String.valueOf(gTagTotalFreq));
-				Adapter.notifyDataSetChanged();
+				myActivity.tv_once.setText(String.valueOf(curTagCount));
+				myActivity.tv_tags.setText(String.valueOf(totalTagCount));
+				myActivity.tv_total_freq.setText(String.valueOf(myActivity.gTagTotalFreq));
+				myActivity.Adapter.notifyDataSetChanged();
 				break;
 			}
 		}
 		
-	};
+	}
 	
 	private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
 		

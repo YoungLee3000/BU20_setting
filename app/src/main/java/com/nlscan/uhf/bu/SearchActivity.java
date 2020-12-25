@@ -127,8 +127,9 @@ public class SearchActivity extends Activity {
             String currentAddress = device != null ? device.getAddress() : "";
             String intentAddress = intent.getStringExtra("DeviceAddress");
             final String action = intent.getAction();
-            int connectState = 0;
-            if (device != null) connectState = device.getBondState();
+
+            if (device == null) return;
+            int connectState = device.getBondState();
             if (ACTION_GATT_CONNECTED.equals(action)) {
 
                 if (   mDeviceAddress.equals(   intentAddress)){
@@ -153,6 +154,34 @@ public class SearchActivity extends Activity {
                 }
 
             }
+           else if (BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action)) {
+                try {
+
+                    Log.d(TAG,"no show the window request");
+                    int pin=intent.getIntExtra("android.bluetooth.device.extra.PAIRING_KEY", 1234);
+                    //the pin in case you need to accept for an specific pin
+                    byte[] pinBytes;
+                    String strName = device.getName();
+                    int length = strName.length();
+                    if (length < 7) return;
+                    pinBytes = (""+strName.substring(length-7,length-6)
+                            + strName.substring(length-5)).getBytes("UTF-8");
+//                    pinBytes = ("123456").getBytes("UTF-8");
+
+                    Log.d(TAG,"the PIN code is " + HexUtil.bytesToHexString(pinBytes));
+                    device.setPin(pinBytes);
+                    //setPairing confirmation if neeeded
+                    boolean rel = device.setPairingConfirmation(true);
+                    abortBroadcast();
+                    if (  rel && mDeviceAddress.equals(   currentAddress)  && !"".equals(currentAddress))
+                        powerOn();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error occurs when trying to auto pair");
+                    e.printStackTrace();
+                }
+            }
+
+
 
         }
     };
@@ -859,6 +888,7 @@ public class SearchActivity extends Activity {
         blueFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         blueFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         blueFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        blueFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);
 
         registerReceiver(mBleReceiver,blueFilter);
 

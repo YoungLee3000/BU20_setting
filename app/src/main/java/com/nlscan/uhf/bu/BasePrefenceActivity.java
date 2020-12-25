@@ -64,7 +64,7 @@ public class BasePrefenceActivity extends PreferenceActivity {
 			return ;
 		mDialog = new ProgressDialog(BasePrefenceActivity.this);
 		mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);// 设置进度条的形式为圆形转动的进度条
-		mDialog.setCancelable(true);// 设置是否可以通过点击Back键取消
+		mDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
 		mDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
         // 设置提示的title的图标，默认是没有的，如果没有设置title的话只设置Icon是不会显示图标的
 		mDialog.setMessage(getString(R.string.power_oning));
