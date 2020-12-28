@@ -164,8 +164,10 @@ public class SearchActivity extends Activity {
                     String strName = device.getName();
                     int length = strName.length();
                     if (length < 7) return;
-                    pinBytes = (""+strName.substring(length-7,length-6)
-                            + strName.substring(length-5)).getBytes("UTF-8");
+
+                    String tailCode = strName.substring(length-7);
+
+                    pinBytes = getPinCode(tailCode).getBytes("UTF-8");
 //                    pinBytes = ("123456").getBytes("UTF-8");
 
                     Log.d(TAG,"the PIN code is " + HexUtil.bytesToHexString(pinBytes));
@@ -185,6 +187,25 @@ public class SearchActivity extends Activity {
 
         }
     };
+
+    private static String getPinCode(String originCode){
+
+        int length = originCode.length();
+        if (length < 7) return "";
+
+        String tailCode = originCode.substring(length-7);
+
+
+        if (tailCode.substring(1,2).matches("[a-z|A-Z]") ){
+            return tailCode.substring(0,1) + tailCode.substring(2);
+        }
+        else {
+            return tailCode.substring(1);
+        }
+
+
+
+    }
 
 
 
@@ -477,12 +498,12 @@ public class SearchActivity extends Activity {
             if (a2dp == BluetoothProfile.STATE_CONNECTED){
 
                 //当前扫码的地址是否已经连接
-                if (ifCurrentConnect(mScanSerial)){
-                    gMyHandler.sendEmptyMessage(CHANGE_SUCCESS);
-                }
-                else{
+//                if (ifCurrentConnect(mScanSerial)){
+//                    gMyHandler.sendEmptyMessage(CHANGE_SUCCESS);
+//                }
+//                else{
                     reFindCmd();
-                }
+//                }
 
             }
             else{//如果未和绑定的设备连接,则解除绑定
@@ -952,7 +973,7 @@ public class SearchActivity extends Activity {
                     break;
                 case CHANGE_FIND:
 //                    Toast.makeText(mainActivity,"重新搜索设备中...", Toast.LENGTH_SHORT).show();
-                    mainActivity.mDialog.setMessage("重新搜索设备中,若长时间搜索不到请重启读卡器...");
+                    mainActivity.mDialog.setMessage("未发现设备,该设备可能已连接或未开机...");
                     mainActivity.reFind();
                     break;
                 case CHANGE_RE_POWER:
