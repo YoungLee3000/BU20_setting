@@ -91,7 +91,7 @@
 
 
     <string name="title">扫码</string>
-    <string name="scan_tip">将码放入取景框，即可自动扫描</string>
+    <string name="scan_tip">将条码置于矩形框中以加快识别</string>
     <string name="no_code_tip">图中未发现码</string>
     <string name="confirm">确认</string>
     <string name="light">点击照亮</string>

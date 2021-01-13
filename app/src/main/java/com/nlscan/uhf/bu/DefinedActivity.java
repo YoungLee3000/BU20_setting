@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 package com.nlscan.uhf.bu;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.hardware.Camera;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CaptureFailure;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
@@ -37,6 +48,8 @@ import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DefinedActivity extends Activity {
     private FrameLayout frameLayout;
@@ -53,8 +66,13 @@ public class DefinedActivity extends Activity {
     private static final String TAG = "DefinedActivity";
 
     //Declare the key. It is used to obtain the value returned from Scan Kit.
-    public static final String SCAN_RESULT = "SCAN_RESULT";
+    public static final String SCAN_RESULT = ScanUtil.RESULT;
     public static final int REQUEST_CODE_PHOTO = 0X1113;
+
+
+    private  boolean mManualFocusEngaged = false;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,11 +133,28 @@ public class DefinedActivity extends Activity {
         remoteView.onCreate(savedInstanceState);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         frameLayout.addView(remoteView, params);
+
+        final int mWidth = (mScreenWidth / 2 + scanFrameSize / 2) - (mScreenWidth / 2 - scanFrameSize / 2);
+
+
         // Set the back, photo scanning, and flashlight operations.
         setBackOperation();
         setPictureScanOperation();
         setFlashOperation();
+
+
+        remoteView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                return false;
+            }
+        });
+
+
     }
+
+
 
     /**
      * Call the lifecycle management method of the remoteView activity.

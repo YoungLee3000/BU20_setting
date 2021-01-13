@@ -24,8 +24,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -233,12 +235,21 @@ public class SearchActivity extends Activity {
     private static final int FLAG_SCAN_RETURN = 2;
     private static final int REQUEST_CODE_SCAN_ONE = 3;
     private static final int REQUEST_CODE_DEFINE = 4;
-
+    private static final int REQUEST_CODE_BITMAP = 5;
 
 
     //申请权限回调
     public static final int CAMERA_REQ_CODE = 111;
     public static final int DEFINED_CODE = 222;
+
+    public static final int BITMAP_CODE = 333;
+    public static final int MULTIPROCESSOR_SYN_CODE = 444;
+    public static final int MULTIPROCESSOR_ASYN_CODE = 555;
+    public static final int GENERATE_CODE = 666;
+    public static final int DECODE = 1;
+    public static final int GENERATE = 2;
+    public static final String DECODE_MODE = "decode_mode";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,7 +263,7 @@ public class SearchActivity extends Activity {
         //DEFINED_CODE为用户自定义，用于接收权限校验结果
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
-                DEFINED_CODE);
+                BITMAP_CODE);
 
         initGps();
         initActionBar();
@@ -299,6 +310,21 @@ public class SearchActivity extends Activity {
                     SearchActivity.this.startActivityForResult(intent, REQUEST_CODE_DEFINE);
                 }
             });
+
+        }
+        //Bitmap Mode
+        else if (requestCode == BITMAP_CODE) {
+
+            btnScan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(SearchActivity.this, CommonActivity.class);
+                    intent.putExtra(DECODE_MODE, BITMAP_CODE);
+                    SearchActivity.this.startActivityForResult(intent, REQUEST_CODE_BITMAP);
+                }
+            });
+
+
 
         }
 
@@ -509,7 +535,7 @@ public class SearchActivity extends Activity {
             else{//如果未和绑定的设备连接,则解除绑定
 
                 reFindCmd();
-                Toast.makeText(this,"未搜索到该设备,请打开设备！",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this,"未搜索到该设备,请打开设备！",Toast.LENGTH_SHORT).show();
             }
 
 
@@ -581,8 +607,11 @@ public class SearchActivity extends Activity {
             try {
                 Class btDeviceCls = BluetoothDevice.class;
                 Method removeBond = btDeviceCls.getMethod("removeBond");
-                removeBond.setAccessible(true);
-                removeBond.invoke(device);
+                if (device !=null && device.getName().startsWith("SR")){
+                    removeBond.setAccessible(true);
+                    removeBond.invoke(device);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -701,24 +730,7 @@ public class SearchActivity extends Activity {
                 if (name != null)
                     mSerialMac.put(device.getName().toUpperCase(),device.getAddress());
             }
-//            int dT =  device.getType();
 
-
-
-//            if (scanRecord !=  null && device !=null ){
-//                byte[] bytes  = scanRecord.getBytes();
-//                String str = HexUtil.bytesToHexString(bytes);
-//
-//                String manuInfo = getManuInfo(str);
-//                if (manuInfo.startsWith("ff00")){
-//                    String manuInfoDecode = HexUtil.hexStringToString(manuInfo.substring(4));
-//                    String serialInfo =  manuInfoDecode == null ? "" : manuInfoDecode.toUpperCase() ;
-//                    if (!mSerialMac.containsKey(serialInfo))
-//                        mSerialMac.put(serialInfo,device.getAddress());
-//                    Log.d(TAG,"the serialInfo " + serialInfo + " device " + device.getAddress());
-//                }
-//
-//            }
 
 
 
@@ -749,28 +761,13 @@ public class SearchActivity extends Activity {
         return resultInfo;
     }
 
-//    // Device scan callback.
-//    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-//            new BluetoothAdapter.LeScanCallback() {
-//
-//                @Override
-//                public void onLeScan(final BluetoothDevice device, int rssi, final byte[] scanRecord) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Log.d(TAG,"the scan record " + HexUtil.bytesToHexString(scanRecord));
-//                        }
-//                    });
-//                }
-//    };
+
 
 
     //跳转到指定页面
     private void jumpTo(){
         mBluetoothLeScanner.stopScan(mLeScanCallback);
-//        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-//        Intent intent = new Intent(this,MainActivity.class);
-//        startActivity(intent);
+
         finish();
     }
 
@@ -781,10 +778,9 @@ public class SearchActivity extends Activity {
 
         switch (requestCode){
             case FIND_DEVICE:
-//                mBluetoothAdapter.startDiscovery();
+
                 mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
                 mBluetoothLeScanner.startScan(mLeScanCallback);
-//                mBluetoothAdapter.startLeScan(mLeScanCallback);
                 break;
             case FLAG_SCAN_RETURN:
                 if (data != null) {
@@ -808,6 +804,25 @@ public class SearchActivity extends Activity {
                     }
                 }
                 break;
+            case REQUEST_CODE_BITMAP:
+                if (data != null){
+                    Parcelable[] parcel = data.getParcelableArrayExtra(CommonActivity.SCAN_RESULT);
+                    if (parcel != null && parcel.length > 0) {
+                        //Get one result.
+                        if (parcel.length == 1) {
+                            if (parcel[0] != null && !TextUtils.isEmpty(((HmsScan) parcel[0]).getOriginalValue())) {
+                                HmsScan obj = (HmsScan) parcel[0];
+                                String scanResultHms = obj.getOriginalValue();
+                                Log.d(TAG,"the result is" + scanResultHms);
+                                obtainAddress(scanResultHms);
+                            }
+                        }
+                    }
+                }
+                else{
+                    Toast.makeText(this,"无效码！",Toast.LENGTH_SHORT).show();
+                }
+
             default:
                 break;
         }
@@ -844,7 +859,8 @@ public class SearchActivity extends Activity {
         mDialog.setCanceledOnTouchOutside(true);// 设置在点击Dialog外是否取消Dialog进度条
         // 设置提示的title的图标，默认是没有的，如果没有设置title的话只设置Icon是不会显示图标的
 
-        mDialog.setMessage(message);
+        mDialog.setMessage(message );
+
         mDialog.show();
 
         View v = mDialog.getWindow().getDecorView();

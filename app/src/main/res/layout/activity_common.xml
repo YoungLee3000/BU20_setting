@@ -70,8 +70,8 @@
 
         <TextView
             android:id="@+id/scan_tip"
-            android:layout_above="@id/scan_ars"
-            android:layout_marginBottom="10dp"
+            android:layout_below="@id/scan_ars"
+            android:layout_marginBottom="5dp"
             android:layout_centerHorizontal="true"
             android:text="@string/scan_tip"
             android:textAllCaps="false"
@@ -84,13 +84,13 @@
 
         <ImageView
             android:id="@+id/scan_ars"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true"
+            android:layout_width="320dp"
+            android:layout_height="243dp"
+            android:layout_marginTop="50dp"
             android:layout_centerHorizontal="true"
             android:background="@drawable/cloors" />
 
-        <com.example.scankitdemo.draw.ScanResultView
+        <com.nlscan.uhf.bu.draw.ScanResultView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/scan_result_view"/>
