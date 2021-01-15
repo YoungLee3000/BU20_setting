@@ -8,9 +8,13 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -189,8 +193,15 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if(!mModuleAvailable)
+		if(!mModuleAvailable){
 			gMyHandler.sendEmptyMessageDelayed(MSG_RELOAD_MODULE_DELAY, 50);
+		}
+		else{
+
+			Message msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON,true);
+			msg.sendToTarget();
+		}
+
 		if (mAdapter != null) {
 			List<Header> headers = newGetHeaders();
 			if(headers != null && headers.size() > 0)
@@ -311,6 +322,98 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 		}
 		
 	}
+
+
+
+	private BroadcastReceiver mBleReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			BluetoothDevice device =  intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+			String currentAddress = device != null ? device.getAddress() : "";
+			String intentAddress = intent.getStringExtra("DeviceAddress");
+			final String action = intent.getAction();
+
+			if (device == null) return;
+			int connectState = device.getBondState();
+			Message msg;
+			if(action != null){
+				switch (action) {
+
+					case BluetoothDevice.ACTION_ACL_CONNECTED:
+						if (device.getName().startsWith("SR")){
+							Toast.makeText(context,"蓝牙设备已连接",Toast.LENGTH_SHORT).show();
+							msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON,true);
+							msg.sendToTarget();
+						}
+
+
+						break;
+					case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+						if (device.getName().startsWith("SR")){
+							Toast.makeText(context,"蓝牙设备已断开",Toast.LENGTH_SHORT).show();
+							msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON,false);
+							msg.sendToTarget();
+						}
+
+
+						break;
+				}
+
+			}
+
+
+
+		}
+	};
+
+
+
+	//注册广播
+	private void register(){
+		//蓝牙广播
+		IntentFilter blueFilter = new IntentFilter();
+
+		blueFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+		blueFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+
+		registerReceiver(mBleReceiver,blueFilter);
+
+	}
+
+
+	//取消注册
+	private void unRegister(){
+		try {
+			unregisterReceiver(mBleReceiver);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		unRegister();
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		register();
+
+	}
+
+
+
+
+
+
+
+
 	
 	@Override
 	protected boolean isValidFragment(String fragmentName) {
