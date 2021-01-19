@@ -1,8 +1,10 @@
 package com.nlscan.uhf.bu;
 
 import java.lang.ref.SoftReference;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -10,6 +12,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -112,6 +115,8 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 				mainActivity.mAdapter.notifyDataSetChanged();
 				UHFReader.READER_STATE er = (UHFReader.READER_STATE)msg.obj;
 				if(er == UHFReader.READER_STATE.OK_ERR){
+					mainActivity.mDisconnect = false;
+					mainActivity.getConnectDevice();
 					Toast.makeText(mainActivity, mainActivity.getString(R.string.power_on_success), Toast.LENGTH_SHORT).show();
 				}else{
 					Toast.makeText(mainActivity, mainActivity.getString(R.string.power_on_failed_prompt), Toast.LENGTH_SHORT).show();
@@ -148,6 +153,9 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 		
 	}
 
+
+
+
 	/**
 	 *取消对话框 
 	 */
@@ -179,7 +187,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 		//动态权限申请
 		PermissionUtils.requestAllRuntimePermission(MainActivity.this);
 
-
+		mDisconnect = false;
 
 
 		mModuleAvailable = (mUHFMgr.getUHFModuleInfo() != null);
@@ -197,9 +205,11 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 			gMyHandler.sendEmptyMessageDelayed(MSG_RELOAD_MODULE_DELAY, 50);
 		}
 		else{
+			if ( !ifCurrentConnect()){
+				Message msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON,false);
+				msg.sendToTarget();
+			}
 
-			Message msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON,true);
-			msg.sendToTarget();
 		}
 
 		if (mAdapter != null) {
@@ -325,6 +335,54 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 
 
 
+
+
+
+	BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+	private boolean mDisconnect = true;
+	private String mAddress = "";
+	//获取当前连接的设备
+	private void getConnectDevice(){
+
+		Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
+		for(BluetoothDevice device : bondedDevices) {
+			try {
+
+				if (device !=null && device.getName().startsWith("SR")){
+					mAddress = device.getAddress();
+					break;
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+
+	}
+
+	private boolean ifCurrentConnect(){
+		int a2dp = mBluetoothAdapter.getProfileConnectionState(4);
+		if (a2dp == BluetoothProfile.STATE_CONNECTED) {
+
+			Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
+
+			for(BluetoothDevice device : bondedDevices) {
+				try {
+
+					if (device !=null && device.getName().startsWith("SR")){
+						 return true;
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+
+
 	private BroadcastReceiver mBleReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -342,16 +400,10 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 				switch (action) {
 
 					case BluetoothDevice.ACTION_ACL_CONNECTED:
-						if (device.getName().startsWith("SR")){
-							Toast.makeText(context,"蓝牙设备已连接",Toast.LENGTH_SHORT).show();
-							msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON,true);
-							msg.sendToTarget();
-						}
-
-
 						break;
 					case BluetoothDevice.ACTION_ACL_DISCONNECTED:
 						if (device.getName().startsWith("SR")){
+							mDisconnect = true;
 							Toast.makeText(context,"蓝牙设备已断开",Toast.LENGTH_SHORT).show();
 							msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON,false);
 							msg.sendToTarget();

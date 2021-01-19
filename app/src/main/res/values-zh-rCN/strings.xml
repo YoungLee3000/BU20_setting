@@ -85,7 +85,7 @@
     <string name="scan_connect_go">扫码连接(适用于蓝牙-UHF设备)</string>
     <string name="scan_connect_dialog">设备连接中...</string>
     <string name="scan_connect_tips">
-        扫码后,<![CDATA[<b>按住蓝牙配对键</b>]]>,直到连接成功界面跳转。若超时,则重新扫码。<![CDATA[<br/>]]>
+        <![CDATA[<b>请长按读卡器BT键5秒至红灯闪烁</b>]]>,然后再开始扫码,直到连接成功界面跳转。若超时,则重新扫码。<![CDATA[<br/>]]>
     </string>
 
 

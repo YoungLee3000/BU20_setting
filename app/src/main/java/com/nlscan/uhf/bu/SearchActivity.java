@@ -120,6 +120,7 @@ public class SearchActivity extends Activity {
     //蓝牙广播
     public final static String ACTION_GATT_CONNECTED =
             "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
+    private boolean mSetPin = false;
     private BroadcastReceiver mBleReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -132,32 +133,36 @@ public class SearchActivity extends Activity {
 
             if (device == null) return;
             int connectState = device.getBondState();
-            if (ACTION_GATT_CONNECTED.equals(action)) {
-
-                if (   mDeviceAddress.equals(   intentAddress)){
-//                    Toast.makeText(SearchActivity.this,"连接成功" ,Toast.LENGTH_SHORT).show();
-//                    jumpTo();
-                     powerOn();
-
-                }
-
-            }
-            else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)){
-                if (BluetoothDevice.BOND_BONDED == connectState){
-//                    Toast.makeText(SearchActivity.this,"配对成功" , Toast.LENGTH_SHORT).show();
-//                    if (mBluetoothLeService != null)  mBluetoothLeService.connect(mDeviceAddress);
-
-                    if (   mDeviceAddress.equals(   currentAddress)  && !"".equals(currentAddress))
-                        bleConnect(mDeviceAddress);
-                }
-                else if (BluetoothDevice.BOND_NONE == connectState){
-                    Log.d(TAG,"refuse bonding");
-                    if (isDialogShow()) gMyHandler.sendEmptyMessage(CHANGE_RETRY);
-                }
-
-            }
-           else if (BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action)) {
+//            if (ACTION_GATT_CONNECTED.equals(action)) {
+//
+//                if (   mDeviceAddress.equals(   intentAddress)){
+////                    Toast.makeText(SearchActivity.this,"连接成功" ,Toast.LENGTH_SHORT).show();
+////                    jumpTo();
+//                     powerOn();
+//
+//                }
+//
+//            }
+//            else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)){
+//                if (BluetoothDevice.BOND_BONDED == connectState){
+//                    Log.d(TAG,"Bond changed success");
+////                    Toast.makeText(SearchActivity.this,"配对成功" , Toast.LENGTH_SHORT).show();
+////                    if (mBluetoothLeService != null)  mBluetoothLeService.connect(mDeviceAddress);
+//
+//                    if (   mDeviceAddress.equals(   currentAddress)  && !"".equals(currentAddress))
+//                        bleConnect(mDeviceAddress);
+//                }
+//                else if (BluetoothDevice.BOND_NONE == connectState){
+//                    Log.d(TAG,"refuse bonding");
+//                    if (isDialogShow()) gMyHandler.sendEmptyMessage(CHANGE_RETRY);
+//                }
+//
+//            }
+          if (BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action)) {
                 try {
+                    if (mSetPin) return;
+
+                    if ( ! mDeviceAddress.equals(   currentAddress)  || "".equals(currentAddress)) return;
 
                     Log.d(TAG,"no show the window request");
                     int pin=intent.getIntExtra("android.bluetooth.device.extra.PAIRING_KEY", 1234);
@@ -176,9 +181,12 @@ public class SearchActivity extends Activity {
                     device.setPin(pinBytes);
                     //setPairing confirmation if neeeded
                     boolean rel = device.setPairingConfirmation(true);
-                    abortBroadcast();
-                    if (  rel && mDeviceAddress.equals(   currentAddress)  && !"".equals(currentAddress))
+
+                    if (  rel ){
+                        mSetPin = true;
                         powerOn();
+                    }
+                    abortBroadcast();
                 } catch (Exception e) {
                     Log.e(TAG, "Error occurs when trying to auto pair");
                     e.printStackTrace();
@@ -478,6 +486,8 @@ public class SearchActivity extends Activity {
 
 
         if(isDialogShow()) return;
+        mSetPin = false;
+
 
         showLoadingWindow(getString(R.string.scan_connect_dialog));
         myTimer.cancel();
@@ -657,6 +667,11 @@ public class SearchActivity extends Activity {
 
                 if (isDialogShow()){
                     gMyHandler.sendEmptyMessageDelayed(CHANGE_RETRY,1000);
+                }
+            }
+            else{
+                if (isDialogShow()){
+                    mDialog.setMessage("建立配对成功");
                 }
             }
         }
@@ -981,7 +996,7 @@ public class SearchActivity extends Activity {
 //                    mainActivity.cancelDialog();
 //                    Toast.makeText(mainActivity,str,Toast.LENGTH_SHORT).show();
 //                    Toast.makeText(mainActivity,"重新建立配对中,请按住配对键...", Toast.LENGTH_SHORT).show();
-                    mainActivity.mDialog.setMessage("重新建立配对中,请按住配对键...");
+                    mainActivity.mDialog.setMessage("配对失败,请长按读卡器BT键至红灯闪烁...");
                     mainActivity.reConnect();
                     break;
                 case CHANGE_FAIL:
@@ -989,7 +1004,7 @@ public class SearchActivity extends Activity {
                     break;
                 case CHANGE_FIND:
 //                    Toast.makeText(mainActivity,"重新搜索设备中...", Toast.LENGTH_SHORT).show();
-                    mainActivity.mDialog.setMessage("未发现设备,该设备可能已连接或未开机...");
+                    mainActivity.mDialog.setMessage("寻找设备中,请耐心等待并检查该设备是否已连接或未开机...");
                     mainActivity.reFind();
                     break;
                 case CHANGE_RE_POWER:
