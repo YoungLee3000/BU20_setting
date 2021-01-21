@@ -521,7 +521,7 @@ public class SearchActivity extends Activity {
 
         String scanAddress = mSerialMac.get(mScanSerial);
 
-
+        mSerialMac.remove(mScanSerial);
 
         //找到了设备
         if (scanAddress != null   && ! "".equals(scanAddress)){
@@ -633,7 +633,7 @@ public class SearchActivity extends Activity {
     private void connectTarget(String address){
 
 
-        removeAll();
+//        removeAll();
 
 
         mDeviceAddress = address;
@@ -666,7 +666,7 @@ public class SearchActivity extends Activity {
 
 
                 if (isDialogShow()){
-                    gMyHandler.sendEmptyMessageDelayed(CHANGE_RETRY,1000);
+                    gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,1000);
                 }
             }
             else{
