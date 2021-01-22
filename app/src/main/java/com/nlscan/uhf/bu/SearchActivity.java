@@ -162,6 +162,8 @@ public class SearchActivity extends Activity {
                 try {
                     if (mSetPin) return;
 
+                    gMyHandler.removeMessages(CHANGE_FIND);
+
                     if ( ! mDeviceAddress.equals(   currentAddress)  || "".equals(currentAddress)) return;
 
                     Log.d(TAG,"no show the window request");
@@ -184,6 +186,15 @@ public class SearchActivity extends Activity {
 
                     if (  rel ){
                         mSetPin = true;
+
+
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                removeAll(mDeviceAddress);
+                            }
+                        },1000);
+
                         powerOn();
                     }
                     abortBroadcast();
@@ -486,7 +497,7 @@ public class SearchActivity extends Activity {
 
 
         if(isDialogShow()) return;
-        mSetPin = false;
+
 
 
         showLoadingWindow(getString(R.string.scan_connect_dialog));
@@ -523,6 +534,8 @@ public class SearchActivity extends Activity {
 
         mSerialMac.remove(mScanSerial);
 
+        mSetPin = false;
+
         //找到了设备
         if (scanAddress != null   && ! "".equals(scanAddress)){
             connectTarget(scanAddress);
@@ -530,16 +543,18 @@ public class SearchActivity extends Activity {
         //未找到设备
         else {
 
-            int a2dp = mBluetoothAdapter.getProfileConnectionState(4);
-            if (a2dp == BluetoothProfile.STATE_CONNECTED){
 
+            if (ifBleConnect()){
+
+                Log.d(TAG,"the ble is connected");
                 //当前扫码的地址是否已经连接
-//                if (ifCurrentConnect(mScanSerial)){
-//                    gMyHandler.sendEmptyMessage(CHANGE_SUCCESS);
-//                }
-//                else{
+                if (ifCurrentConnect(mScanSerial)){
+                    powerOn();
+                }
+                else{
                     reFindCmd();
-//                }
+                }
+
 
             }
             else{//如果未和绑定的设备连接,则解除绑定
@@ -566,6 +581,20 @@ public class SearchActivity extends Activity {
 
     }
 
+
+
+    //ble是否连接
+    private boolean ifBleConnect(){
+        boolean ifConnect = false;
+        String connectStr = mUHFMgr.getParam("BLE_STATE","PARAM_BLE_STATE","false");
+        try {
+            ifConnect = Boolean.parseBoolean(connectStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ifConnect;
+
+    }
 
     //开始尝试上电
     private void powerOn(){
@@ -596,24 +625,12 @@ public class SearchActivity extends Activity {
     }
 
 
-    //判断当前地址的设备是否已经连接
-    private boolean ifCurrentConnect(String scanAddress){
-        Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
-        for(BluetoothDevice device : bondedDevices) {
-            if (device != null){
-                String address = device.getAddress();
-                if (address !=null && address.toUpperCase().equals(scanAddress)) return  true;
-            }
-        }
-
-        return false;
-    }
-
 
     //移除所有已经绑定的设备
-    private void removeAll(){
+    private void removeAll(String address){
         Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
         for(BluetoothDevice device : bondedDevices) {
+            if (device!=null && device.getAddress().equals(address)) continue;
             try {
                 Class btDeviceCls = BluetoothDevice.class;
                 Method removeBond = btDeviceCls.getMethod("removeBond");
@@ -627,6 +644,42 @@ public class SearchActivity extends Activity {
             }
         }
     }
+
+
+    //判断当前地址的设备是否已经连接
+    private boolean ifCurrentConnect(String scanName){
+        Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
+        for(BluetoothDevice device : bondedDevices) {
+            if (device != null){
+                String name = device.getName();
+                if (name !=null && name.toUpperCase().equals(scanName) && getConnectState(device) ) return  true;
+            }
+        }
+
+        return false;
+    }
+
+
+    //判断设备是否连接
+    private boolean getConnectState(BluetoothDevice device){
+        try {
+            Method isConnectedMethod = BluetoothDevice.class.getDeclaredMethod("isConnected", (Class[]) null);
+            isConnectedMethod.setAccessible(true);
+            boolean isConnected = (boolean) isConnectedMethod.invoke(device, (Object[]) null);
+            if(isConnected){
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+
+
+
 
 
     //连接指定设备
@@ -653,6 +706,9 @@ public class SearchActivity extends Activity {
             BluetoothDevice targetDevice = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
             Log.d(TAG,"device is reconnecting !");
 
+
+
+
             if ( !targetDevice.createBond()){
 
                 try {
@@ -671,7 +727,9 @@ public class SearchActivity extends Activity {
             }
             else{
                 if (isDialogShow()){
-                    mDialog.setMessage("建立配对成功");
+                    mDialog.setMessage("建立配对中,请确保蓝牙灯处于红色闪烁状态");
+                    gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,4000);
+
                 }
             }
         }
@@ -1000,11 +1058,11 @@ public class SearchActivity extends Activity {
                     mainActivity.reConnect();
                     break;
                 case CHANGE_FAIL:
-                    Toast.makeText(mainActivity,"连接失败，请再次扫码", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mainActivity,"连接失败，请再次扫码", Toast.LENGTH_SHORT).show();
                     break;
                 case CHANGE_FIND:
 //                    Toast.makeText(mainActivity,"重新搜索设备中...", Toast.LENGTH_SHORT).show();
-                    mainActivity.mDialog.setMessage("寻找设备中,请耐心等待并检查该设备是否已连接或未开机...");
+                    mainActivity.mDialog.setMessage("寻找设备中,请确保该设备已开机并且蓝牙灯处于红色闪烁状态");
                     mainActivity.reFind();
                     break;
                 case CHANGE_RE_POWER:

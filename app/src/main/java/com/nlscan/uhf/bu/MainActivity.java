@@ -362,8 +362,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 	}
 
 	private boolean ifCurrentConnect(){
-		int a2dp = mBluetoothAdapter.getProfileConnectionState(4);
-		if (a2dp == BluetoothProfile.STATE_CONNECTED) {
+		if (ifBleConnect()) {
 
 			Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
 
@@ -380,6 +379,20 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 			}
 		}
 		return false;
+	}
+
+
+
+	private boolean ifBleConnect(){
+		boolean ifConnect = false;
+		String connectStr = mUHFMgr.getParam("BLE_STATE","PARAM_BLE_STATE","false");
+		try {
+			ifConnect = Boolean.parseBoolean(connectStr);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ifConnect;
+
 	}
 
 
@@ -404,7 +417,7 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 					case BluetoothDevice.ACTION_ACL_DISCONNECTED:
 						if (device.getName().startsWith("SR")){
 							mDisconnect = true;
-							Toast.makeText(context,"蓝牙设备已断开",Toast.LENGTH_SHORT).show();
+//							Toast.makeText(context,"蓝牙设备已断开",Toast.LENGTH_SHORT).show();
 							msg = Message.obtain(gMyHandler, MSG_UHF_POWER_ON,false);
 							msg.sendToTarget();
 						}
