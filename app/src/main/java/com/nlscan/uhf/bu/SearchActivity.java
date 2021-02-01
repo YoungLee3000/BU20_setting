@@ -76,7 +76,7 @@ public class SearchActivity extends Activity {
     private static final int CHANGE_FIND = 4;
     private static final int CHANGE_RE_POWER = 5;
     private Timer myTimer = new Timer();
-    private static final int TIMEOUT_VAL = 30000;
+    private static final int TIMEOUT_VAL = 32000;
 
 
     //UHF相关
@@ -160,7 +160,7 @@ public class SearchActivity extends Activity {
 //            }
           if (BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action)) {
                 try {
-                    if (mSetPin) return;
+//                    if (mSetPin) return;
 
                     gMyHandler.removeMessages(CHANGE_FIND);
 
@@ -196,6 +196,9 @@ public class SearchActivity extends Activity {
                         },1000);
 
                         powerOn();
+                    }
+                    else{
+                        Log.d(TAG,"输入PIN码失败");
                     }
                     abortBroadcast();
                 } catch (Exception e) {
@@ -534,7 +537,7 @@ public class SearchActivity extends Activity {
 
         mSerialMac.remove(mScanSerial);
 
-        mSetPin = false;
+//        mSetPin = true;
 
         //找到了设备
         if (scanAddress != null   && ! "".equals(scanAddress)){
@@ -559,6 +562,7 @@ public class SearchActivity extends Activity {
             }
             else{//如果未和绑定的设备连接,则解除绑定
 
+                listDevices();
                 reFindCmd();
 //                Toast.makeText(this,"未搜索到该设备,请打开设备！",Toast.LENGTH_SHORT).show();
             }
@@ -567,6 +571,16 @@ public class SearchActivity extends Activity {
 
         }
 
+    }
+
+    //列出调试
+    private void listDevices(){
+        Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
+        for(BluetoothDevice device : bondedDevices) {
+            if (device==null ) continue;
+            String name = device.getName();
+            Log.d(TAG,"未搜索到设备,当前已连接:" + name);
+        }
     }
 
 
@@ -720,6 +734,7 @@ public class SearchActivity extends Activity {
                     e.printStackTrace();
                 }
 
+                Log.d(TAG,"bond failed");
 
                 if (isDialogShow()){
                     gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,1000);
@@ -727,8 +742,10 @@ public class SearchActivity extends Activity {
             }
             else{
                 if (isDialogShow()){
+//                    mSetPin = false;
+                    Log.d(TAG,"bond success");
                     mDialog.setMessage("建立配对中,请确保蓝牙灯处于红色闪烁状态");
-                    gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,4000);
+                    gMyHandler.sendEmptyMessageDelayed(CHANGE_FIND,10000);
 
                 }
             }
@@ -995,9 +1012,9 @@ public class SearchActivity extends Activity {
 
         blueFilter.addAction(ACTION_GATT_CONNECTED);
 
-        blueFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        blueFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        blueFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+//        blueFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+//        blueFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+//        blueFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         blueFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);
 
         registerReceiver(mBleReceiver,blueFilter);

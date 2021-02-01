@@ -16,13 +16,21 @@
 package com.nlscan.uhf.bu;
 
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
 import android.view.SurfaceHolder;
 
+import com.huawei.hms.ml.camera.CameraMeteringData;
+import com.huawei.hms.scankit.A;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CameraOperation {
 
@@ -34,6 +42,8 @@ public class CameraOperation {
     private int width = 640;
     private int height = 480;
     private double defaultZoom = 1.0;
+    private Timer focusTimer = new Timer();
+
 
     /**
      * Open up the camera.
@@ -48,8 +58,69 @@ public class CameraOperation {
         camera.setParameters(parameters);
     }
 
+    //打开闪光灯
+    public void openFlash(){
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        camera.setParameters(parameters);
+    }
+
+    //打开闪光灯
+    public void closeFlash(){
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        camera.setParameters(parameters);
+    }
+
+    //自动对焦
+    public void focus(int x,int y) {
+
+        focusTimer.cancel();
+        Rect focusArea = new Rect();
+        focusArea.left = Math.max(x - 100, -1000); // 取最大或最小值，避免范围溢出屏幕坐标
+        focusArea.top = Math.max(y - 100, -1000);
+        focusArea.right = Math.min(x + 100, 1000);
+        focusArea.bottom = Math.min(y + 100, 1000);
+        // 创建Camera.Area
+        Camera.Area cameraArea = new Camera.Area(focusArea, 1000);
+        List<Camera.Area> meteringAreas = new ArrayList<Camera.Area>();
+        List<Camera.Area> focusAreas = new ArrayList<Camera.Area>();
+        if (parameters.getMaxNumMeteringAreas() > 0) {
+            meteringAreas.add(cameraArea);
+            focusAreas.add(cameraArea);
+        }
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO); // 设置对焦模式
+        parameters.setFocusAreas(focusAreas); // 设置对焦区域
+//        parameters.setMeteringAreas(meteringAreas); // 设置测光区域
+        try {
+            camera.cancelAutoFocus(); // 每次对焦前，需要先取消对焦
+            camera.setParameters(parameters); // 设置相机参数
+            camera.autoFocus(new Camera.AutoFocusCallback() {
+                @Override
+                public void onAutoFocus(boolean success, Camera camera) {
+
+                }
+            }); // 开启对焦
+        } catch (Exception e) {
+        }
+
+        focusTimer = new Timer();
+
+        focusTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                camera.setParameters(parameters);
+            }
+        },1000);
+
+    }
+
+
+
+
+
     public synchronized void close() {
         if (camera != null) {
+            focusTimer.cancel();
             camera.release();
             camera = null;
         }

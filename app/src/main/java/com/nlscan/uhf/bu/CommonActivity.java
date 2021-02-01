@@ -15,17 +15,22 @@
  */
 package com.nlscan.uhf.bu;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -36,6 +41,7 @@ import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
@@ -60,9 +66,12 @@ public class CommonActivity extends Activity  {
     private CameraOperation cameraOperation;
     private SurfaceCallBack surfaceCallBack;
     private CommonHandler handler;
+    private SurfaceView cameraPreview;
     private boolean isShow;
     private int mode;
     private ImageView backBtn;
+    private ImageView flushBtn;
+    private boolean ifFlush = false;
     private ImageView imgBtn;
     private ImageView mscanArs;
     private TextView mscanTips;
@@ -104,11 +113,13 @@ public class CommonActivity extends Activity  {
         }
         cameraOperation = new CameraOperation();
         surfaceCallBack = new SurfaceCallBack();
-        SurfaceView cameraPreview = findViewById(R.id.surfaceView);
+        cameraPreview = findViewById(R.id.surfaceView);
+
         adjustSurface(cameraPreview);
         surfaceHolder = cameraPreview.getHolder();
         isShow = false;
         setBackOperation();
+        setFlashOperation();
         setPictureScanOperation();
 
         scanResultView = findViewById(R.id.scan_result_view);
@@ -155,6 +166,24 @@ public class CommonActivity extends Activity  {
                     setResult(RESULT_CANCELED);
                 }
                 CommonActivity.this.finish();
+            }
+        });
+    }
+
+
+    private void setFlashOperation() {
+        flushBtn = (ImageView) findViewById(R.id.flush_btn);
+        flushBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!ifFlush) {
+                    cameraOperation.openFlash();
+                    flushBtn.setImageResource(R.drawable.flashlight_on);
+                } else {
+                    cameraOperation.closeFlash();
+                    flushBtn.setImageResource(R.drawable.flashlight_off);
+                }
+                ifFlush = !ifFlush;
             }
         });
     }
@@ -208,16 +237,32 @@ public class CommonActivity extends Activity  {
         super.onDestroy();
     }
 
+
     private void initCamera() {
+
         try {
             cameraOperation.open(surfaceHolder);
             if (handler == null) {
                 handler = new CommonHandler(CommonActivity.this, cameraOperation, mode);
+                cameraPreview.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        int areaX = (int) (event.getX() / cameraPreview.getWidth() * 2000) - 1000; // 获取映射区域的X坐标
+                        int areaY = (int) (event.getY() / cameraPreview.getWidth() * 2000) - 1000; //
+                        cameraOperation.focus(areaX,areaY);
+                        return false;
+
+                    }
+                });
             }
         } catch (IOException e) {
             Log.w(TAG, e);
         }
+
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

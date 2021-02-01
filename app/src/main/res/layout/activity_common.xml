@@ -45,6 +45,16 @@
             android:src="@drawable/back" />
 
         <ImageView
+            android:id="@+id/flush_btn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:visibility="visible"
+            android:gravity="center"
+            android:src="@drawable/flashlight_off" />
+
+        <ImageView
             android:id="@+id/img_btn"
             android:layout_width="48dp"
             android:layout_height="48dp"
