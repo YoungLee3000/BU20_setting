@@ -135,9 +135,9 @@ public class CommonActivity extends Activity  {
             float sceenWidth = outPoint.x;
             float sceenHeight = outPoint.y;
             float rate;
-            if (sceenWidth / (float) 640 > sceenHeight / (float) 480) {
-                rate = sceenWidth / (float) 640;
-                int targetHeight = (int) (480 * rate);
+            if (sceenWidth / (float) Constants.WIDTH > sceenHeight / (float) Constants.HEIGHT) {
+                rate = sceenWidth / (float) Constants.WIDTH;
+                int targetHeight = (int) (Constants.HEIGHT * rate);
                 paramSurface.width = FrameLayout.LayoutParams.MATCH_PARENT;
                 paramSurface.height = targetHeight;
                 int topMargin = (int) (-(targetHeight - sceenHeight) / 2);
@@ -145,8 +145,8 @@ public class CommonActivity extends Activity  {
                     paramSurface.topMargin = topMargin;
                 }
             } else {
-                rate = sceenHeight / (float) 480;
-                int targetWidth = (int) (640 * rate);
+                rate = sceenHeight / (float) Constants.HEIGHT;
+                int targetWidth = (int) (Constants.WIDTH * rate);
                 paramSurface.width = targetWidth;
                 paramSurface.height = FrameLayout.LayoutParams.MATCH_PARENT;
                 int leftMargin = (int) (-(targetWidth - sceenWidth) / 2);
@@ -241,16 +241,18 @@ public class CommonActivity extends Activity  {
     private void initCamera() {
 
         try {
-            cameraOperation.open(surfaceHolder);
+            OverCameraView overCameraView = (OverCameraView) findViewById(R.id.over_view);
+            cameraOperation.open(surfaceHolder,overCameraView);
             if (handler == null) {
                 handler = new CommonHandler(CommonActivity.this, cameraOperation, mode);
                 cameraPreview.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
 
-                        int areaX = (int) (event.getX() / cameraPreview.getWidth() * 2000) - 1000; // 获取映射区域的X坐标
-                        int areaY = (int) (event.getY() / cameraPreview.getWidth() * 2000) - 1000; //
-                        cameraOperation.focus(areaX,areaY);
+//                        int areaX = (int) (event.getX() / cameraPreview.getWidth() * 2000) - 1000; // 获取映射区域的X坐标
+//                        int areaY = (int) (event.getY() / cameraPreview.getWidth() * 2000) - 1000; //
+//                        cameraOperation.focus(areaX,areaY);
+                        cameraOperation.focus(event.getX(),event.getY());
                         return false;
 
                     }

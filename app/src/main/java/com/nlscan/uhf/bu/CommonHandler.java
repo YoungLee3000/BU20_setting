@@ -186,7 +186,7 @@ public final class CommonHandler extends Handler {
                         commonActivity.scanResultView.add(new ScanResultView.HmsScanGraphic(commonActivity.scanResultView, arr[i]));
                     }
                 }
-                commonActivity.scanResultView.setCameraInfo(640, 480);
+                commonActivity.scanResultView.setCameraInfo(Constants.WIDTH, Constants.HEIGHT);
                 commonActivity.scanResultView.invalidate();
                 sendEmptyMessageDelayed(1,1000);
             } else {

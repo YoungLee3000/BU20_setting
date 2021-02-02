@@ -15,11 +15,13 @@
  */
 package com.nlscan.uhf.bu;
 
+import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.huawei.hms.ml.camera.CameraMeteringData;
@@ -39,16 +41,18 @@ public class CameraOperation {
     private Camera.Parameters parameters = null;
     private boolean isPreview = false;
     private FrameCallback frameCallback = new FrameCallback();
-    private int width = 640;
-    private int height = 480;
+    private int width = Constants.WIDTH;
+    private int height = Constants.HEIGHT;
     private double defaultZoom = 1.0;
     private Timer focusTimer = new Timer();
+
+    private OverCameraView mOverCameraView;//绘制对焦框控件
 
 
     /**
      * Open up the camera.
      */
-    public synchronized void open(SurfaceHolder holder) throws IOException {
+    public synchronized void open(SurfaceHolder holder,  OverCameraView overCameraView) throws IOException {
         camera = Camera.open();
         parameters = camera.getParameters();
         parameters.setPictureSize(width, height);
@@ -56,6 +60,7 @@ public class CameraOperation {
         parameters.setPictureFormat(ImageFormat.NV21);
         camera.setPreviewDisplay(holder);
         camera.setParameters(parameters);
+        mOverCameraView = overCameraView;
     }
 
     //打开闪光灯
@@ -68,6 +73,23 @@ public class CameraOperation {
     public void closeFlash(){
         parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         camera.setParameters(parameters);
+    }
+
+    private Camera.AutoFocusCallback autoFocusCallback = new Camera.AutoFocusCallback() {
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            Log.d("cameraDraw","on focus");
+
+            mOverCameraView.disDrawTouchFocusRect();//清除对焦框
+
+            //对焦完成后改回连续对焦
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            camera.setParameters(parameters);
+        }
+    };
+
+    public void focus(float x, float y){
+        mOverCameraView.setTouchFoucusRect(camera,autoFocusCallback, x, y);
     }
 
     //自动对焦
@@ -89,6 +111,7 @@ public class CameraOperation {
         }
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO); // 设置对焦模式
         parameters.setFocusAreas(focusAreas); // 设置对焦区域
+
 //        parameters.setMeteringAreas(meteringAreas); // 设置测光区域
         try {
             camera.cancelAutoFocus(); // 每次对焦前，需要先取消对焦

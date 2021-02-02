@@ -104,5 +104,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/scan_result_view"/>
+
+        <com.nlscan.uhf.bu.OverCameraView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/over_view"/>
     </RelativeLayout>
 </FrameLayout>

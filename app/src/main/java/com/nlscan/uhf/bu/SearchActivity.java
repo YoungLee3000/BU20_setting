@@ -188,13 +188,6 @@ public class SearchActivity extends Activity {
                         mSetPin = true;
 
 
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                removeAll(mDeviceAddress);
-                            }
-                        },1000);
-
                         powerOn();
                     }
                     else{
@@ -632,7 +625,7 @@ public class SearchActivity extends Activity {
                     gMyHandler.sendEmptyMessage(CHANGE_SUCCESS);
                 }
             }
-        },3000);
+        },1000);
 
 
 
@@ -640,24 +633,7 @@ public class SearchActivity extends Activity {
 
 
 
-    //移除所有已经绑定的设备
-    private void removeAll(String address){
-        Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
-        for(BluetoothDevice device : bondedDevices) {
-            if (device!=null && device.getAddress().equals(address)) continue;
-            try {
-                Class btDeviceCls = BluetoothDevice.class;
-                Method removeBond = btDeviceCls.getMethod("removeBond");
-                if (device !=null && device.getName().startsWith("SR")){
-                    removeBond.setAccessible(true);
-                    removeBond.invoke(device);
-                }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
     //判断当前地址的设备是否已经连接
