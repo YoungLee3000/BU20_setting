@@ -176,6 +176,10 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 	private void cancelMyDialog(){
 		if(mDialog != null)
 			mDialog.dismiss();
+		if (mReLoadDialog !=null){
+			mReLoadDialog.dismiss();
+			mReLoadDialog = null;
+		}
 	}
 	
 	
@@ -746,8 +750,14 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 			
 			if(mReLoadDialog != null)
 			{
-				if(!mReLoadDialog.isShowing())
-					mReLoadDialog.show();
+				if(!mReLoadDialog.isShowing() ){
+					try {
+						mReLoadDialog.show();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
 				return ;
 			}
 			
@@ -777,7 +787,8 @@ public class MainActivity extends BasePrefenceActivity implements ISettingChange
 			
 			mReLoadDialog = builder.create();
 			mReLoadDialog.setCanceledOnTouchOutside(false);
-			mReLoadDialog.show();
+			if (!MainActivity.this.isFinishing())
+				mReLoadDialog.show();
 
 
 
