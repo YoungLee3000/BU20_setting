@@ -625,7 +625,7 @@ public class SearchActivity extends Activity {
                     gMyHandler.sendEmptyMessage(CHANGE_SUCCESS);
                 }
             }
-        },1000);
+        },2500);
 
 
 
